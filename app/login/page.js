@@ -17,7 +17,6 @@ export default function Login() {
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center mb-6">
-          {/* <img className="w-40 object-contain" src={Logo} alt="logo" /> */}
           <h2>LOGO</h2>
         </div>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -30,23 +29,15 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Continue as
               </h1>
-              <Link href="/dashboard" >
-                <div className="bg-green-300 px-3 py-1 rounded-lg text-center cursor-pointer">
-                  Guest
-                </div>
+              <Link href="/dashboard">
+                {" "}
+                <p className="bg-green-300 px-3 py-1 rounded-lg">Guest</p>
               </Link>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4 md:space-y-6"
-
-            >
+            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
               <div>
-                <label
-                  for="username"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   UserName
                 </label>
                 <input
@@ -55,7 +46,6 @@ export default function Login() {
                   id="username"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="username"
-                  required=""
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
@@ -84,10 +74,7 @@ export default function Login() {
                 Sign in
               </button>
               <p className="text-white">
-                No Account? Create one{" "}
-                <a className="text-blue-300">
-                  here
-                </a>
+                No Account? Create one <a className="text-blue-300">here</a>
               </p>
             </form>
           </div>
