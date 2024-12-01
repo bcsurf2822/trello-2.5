@@ -1,5 +1,5 @@
-// import connectToDatabase from "@/lib/mongooseConnect";
-// import User from "@/lib/models";
+import connectToDatabase from "../../../lib/mongoose";
+import User from "../../../lib/models";
 
 // export async function GET(request) {
 //   try {
@@ -17,20 +17,20 @@
 //   }
 // }
 
-// export async function POST(request) {
-//   try {
-//     await connectToDatabase();
+export async function POST(request) {
+  try {
+    await connectToDatabase();
 
-//     const data = await request.json();
-//     const newUser = await User.create(data); // Create a new user
+    const data = await request.json();
+    const newUser = await User.create(data); // Create a new user
 
-//     return new Response(JSON.stringify(newUser), {
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   } catch (error) {
-//     return new Response(JSON.stringify({ error: error.message }), {
-//       status: 500,
-//       headers: { "Content-Type": "application/json" },
-//     });
-//   }
-// }
+    return new Response(JSON.stringify(newUser), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
