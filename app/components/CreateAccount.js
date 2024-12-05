@@ -1,4 +1,4 @@
-export function SignupForm() {
+export function CreateAccount() {
   return (
     <form >
       <div>
