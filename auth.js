@@ -3,6 +3,7 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import Google from "next-auth/providers/google"
 import clientPromise from "./lib/mongo";
 
+
 const config = {
   providers: [
     Google({
