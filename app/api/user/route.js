@@ -22,7 +22,7 @@ export async function POST(request) {
     await connectToDatabase();
 
     const data = await request.json();
-    const newUser = await User.create(data); // Create a new user
+    const newUser = await User.create(data);
 
     return new Response(JSON.stringify(newUser), {
       headers: { "Content-Type": "application/json" },
