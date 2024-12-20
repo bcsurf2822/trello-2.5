@@ -3,11 +3,12 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import Google from "next-auth/providers/google"
 import clientPromise from "./lib/mongo";
 
+
 const config = {
   providers: [
     Google({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   adapter: MongoDBAdapter(clientPromise),

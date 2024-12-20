@@ -20,6 +20,7 @@
   "devDependencies": {
     "@types/node": "22.9.0",
     "@types/react": "18.3.12",
+    "daisyui": "^4.12.22",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
