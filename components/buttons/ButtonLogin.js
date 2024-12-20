@@ -13,7 +13,7 @@ const ButtonLogin = ({ session }) => {
         className="btn btn-primary"
         href={dashURL}
       >
-        Welcome back {session.user.name || "user"}
+        Welcome Back {session.user.name || "user"}
         {/* {children} */}
       </Link>
     );
