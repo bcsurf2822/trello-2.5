@@ -11,6 +11,8 @@
   "dependencies": {
     "@auth/mongodb-adapter": "^3.7.4",
     "axios": "^1.7.9",
+    "cookies-next": "^5.0.2",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.2",
     "next": "15.0.3",
