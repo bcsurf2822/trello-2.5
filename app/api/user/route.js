@@ -1,5 +1,5 @@
 import connectToDatabase from "../../../lib/mongoose";
-import User from "../../../lib/models";
+import User from "../../../models/User";
 
 
 export async function POST(request) {

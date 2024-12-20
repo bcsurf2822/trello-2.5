@@ -1,9 +1,10 @@
 
 
+import ButtonLogout from "../components/buttons/ButtonLogout";
 import { auth } from "../auth";
 import ButtonLogin from "../components/buttons/ButtonLogin";
 
-// import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
