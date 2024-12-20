@@ -18,7 +18,7 @@ export default function Login() {
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="flex items-center mb-6">
-          <h2>LOGO</h2>
+          <h2 className="text-3xl text-white font-bold underline">Trello 2.5</h2>
         </div>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -32,7 +32,7 @@ export default function Login() {
               </h1>
               <Link href="/dashboard">
                 {" "}
-                <p className="bg-green-300 px-3 py-1 rounded-lg">Guest</p>
+                <p className="bg-green-300 px-4 py-1 rounded-xl text-gray-950 font-bold">Guest</p>
               </Link>
             </div>
 
@@ -74,7 +74,7 @@ export default function Login() {
               >
                 Sign in
               </button>
-              <ButtonLogin />
+              <ButtonLogin  />
             </form>
           </div>
         </div>
