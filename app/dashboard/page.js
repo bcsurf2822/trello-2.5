@@ -12,7 +12,7 @@ export default function DashBoard() {
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300">
-        <h1 className="text-2xl font-bold mb-2">Organization</h1>
+        <h1 className="text-2xl font-bold mb-2">Projects</h1>
       </div>
       <p className="mt-10 text-xl mb-4">Boards</p>
       <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
@@ -39,30 +39,26 @@ export default function DashBoard() {
               <h3 className="font-bold text-lg">Create Board</h3>
               <button
                 onClick={closeModal}
-                className="text-black hover:bg-gray-200 p-1 rounded"
+                className="text-gray-200 hover:bg-gray-200 hover:text-black p-1 rounded"
               >
                 ✕
               </button>
             </div>
-            <p className="py-4">Press ESC key or click the button below to close</p>
+            <p className="py-4">
+              Press ESC key or click the button below to close
+            </p>
             <label className="block mt-4">
-              <span className="text-sm">Board Title</span>
+              <span className="text-md font-bold">Board Title</span>
               <input
                 className="border-black border rounded mt-1 w-full"
                 value={newBoard}
                 onChange={(e) => setNewBoard(e.target.value)}
               />
             </label>
-            <div className="modal-action">
-              <button
-                onClick={closeModal}
-                className="text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5 mr-2 cursor-pointer font-semibold mt-6 mb-4"
-              >
+            <div className="flex items-center justify-end gap-3 mt-2">
+              <button onClick={closeModal} className="btn btn-accent">
                 Submit
               </button>
-              <form method="dialog">
-                <button className="btn">Close</button>
-              </form>
             </div>
           </div>
         </dialog>
