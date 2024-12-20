@@ -10,7 +10,7 @@ const ButtonLogin = ({ session }) => {
     return (
       <Link
         // using conditional and ternary to make button look different based on props passed
-        className={`btn btn-primary ${extraStyle ? extraStyle : ""}`}
+        className="btn btn-primary"
         href={dashURL}
       >
         Welcome back {session.user.name || "user"}
@@ -25,7 +25,7 @@ const ButtonLogin = ({ session }) => {
         signIn(undefined, { callbackUrl: 
          dashURL});
       }}
-      className={`btn btn-primary ${extraStyle ? extraStyle : ""}`}
+      className="btn btn-primary "
     >
       Get Started
     </button>
