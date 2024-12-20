@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Project() {
+export default function Board() {
   return (
     <div>
-      This is the Project Page
+      This is the Board Page
     </div>
   )
 }
