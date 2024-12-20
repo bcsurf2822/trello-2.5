@@ -1,10 +1,11 @@
 "use client";
+
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-// import React, { useState } from "react";
+import  { useState } from "react";
 
 export default function DashBoard() {
-  // const [newBoard, setNewBoard] = useState("");
+  const [newBoard, setNewBoard] = useState("");
   const boards = [];
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
@@ -23,6 +24,8 @@ export default function DashBoard() {
         >
           <p className="ml-2 font-bold">Add Board</p>
         </div>
+        {/* <Boards /> */}
+
         {boards.map((board) => (
           <div key={board._id} className="group">
             <Link href={`/board/${board._id}`} key={board._id}>

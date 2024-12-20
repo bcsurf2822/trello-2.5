@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   isGuest: {
     type: Boolean,
+    default: false,
   },
 
   boards: [

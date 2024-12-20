@@ -17,10 +17,9 @@ export default function Login() {
   };
 
   const handleGuestSignIn = async () => {
-    const response = await axios.post("/api/auth/guest");
-    if (response.ok) {
+
       redirect("/dashboard");
-    }
+
   };
 
   return (
