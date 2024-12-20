@@ -1,9 +1,10 @@
 "use client";
+import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-import React, { useState } from "react";
+// import React, { useState } from "react";
 
 export default function DashBoard() {
-  const [newBoard, setNewBoard] = useState("");
+  // const [newBoard, setNewBoard] = useState("");
   const boards = [];
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
@@ -35,7 +36,8 @@ export default function DashBoard() {
 
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
-            <div className="flex justify-between">
+            <FormNewBoard closeModal={closeModal} />
+            {/* <div className="flex justify-between">
               <h3 className="font-bold text-lg">Create Board</h3>
               <button
                 onClick={closeModal}
@@ -59,7 +61,7 @@ export default function DashBoard() {
               <button onClick={closeModal} className="btn btn-accent">
                 Submit
               </button>
-            </div>
+            </div> */}
           </div>
         </dialog>
       </div>

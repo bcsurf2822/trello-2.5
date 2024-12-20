@@ -3,15 +3,24 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    name: { type: String,
+      trim: true
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    image: {
+      type: String,
+    },
+
     boards: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Board",
-      }
-    ]
+      },
+    ],
   },
   { timestamps: true }
 );
