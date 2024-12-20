@@ -9,7 +9,7 @@ const ButtonLogin = ({ session }) => {
   if (session) {
     return (
       <Link
-        // using conditional and ternary to make button look different based on props passed
+
         className="btn btn-primary"
         href={dashURL}
       >
@@ -27,7 +27,7 @@ const ButtonLogin = ({ session }) => {
       }}
       className="btn btn-primary "
     >
-      Get Started
+    Sign In With Google
     </button>
   );
 };

@@ -5,6 +5,7 @@ import { auth } from "../auth";
 import ButtonLogin from "../components/buttons/ButtonLogin";
 
 import { redirect } from "next/navigation";
+import Login from "@/components/homeUI/Login";
 
 export default async function Home() {
   const session = await auth();
@@ -12,8 +13,9 @@ export default async function Home() {
   console.log("Auth", auth)
 
   return (
-    <div className="w-28 h-60 bg-green-900">
-      <ButtonLogin session={session} />;
-    </div>
+    <main >
+      {/* <ButtonLogin session={session} />; */}
+      <Login />
+    </main>
   );
 }
