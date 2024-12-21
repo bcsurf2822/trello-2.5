@@ -91,12 +91,7 @@ export async function DELETE(req) {
 
     const user = await User.findById(session?.user?.id);
 
-    if (!user.hasAccess) {
-      return NextResponse.json(
-        { error: "Please subscribe first!" },
-        { status: 403 }
-      );
-    }
+
 
     await Board.deleteOne({
       _id: boardId,
