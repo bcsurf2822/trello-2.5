@@ -54,11 +54,11 @@ export default function DashBoard() {
         {boards.map((board) => (
           <div key={board._id} className="group">
             <div className="bg-gray-100 hover:bg-gray-200 rounded-lg h-28 flex items-center justify-between">
-              <Link href={`/board/${board._id}`} key={board._id}>
-                {" "}
-                <p className="ml-4 text-lg font-bold hover:text-blue-500">
-                  {board.name}
-                </p>
+              <Link
+                className="ml-4 text-lg font-bold hover:text-blue-500"
+                href={`/dashboard/board/${board._id}`}
+              >
+                {board.name}
               </Link>
 
               <DeleteBoardButton
