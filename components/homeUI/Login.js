@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import ButtonLogin from "../buttons/ButtonLogin";
+import { redirect } from "next/navigation";
+import axios from "axios";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -12,6 +14,12 @@ export default function Login() {
     console.log("vals", e);
     setUsername("");
     setPassword("");
+  };
+
+  const handleGuestSignIn = async () => {
+
+      redirect("/dashboard");
+
   };
 
   return (
@@ -32,12 +40,13 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Continue as
               </h1>
-              <Link href="/dashboard">
-                {" "}
-                <p className="bg-green-300 px-4 py-1 rounded-xl text-gray-950 font-bold">
-                  Guest
-                </p>
-              </Link>
+              <button
+                onClick={handleGuestSignIn}
+                className="bg-green-300 px-4 py-1 rounded-xl text-gray-950 font-bold"
+                href="/dashboard"
+              >
+                Guest
+              </button>
             </div>
 
             <ButtonLogin />

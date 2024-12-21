@@ -1,19 +1,30 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import mongoose from "mongoose";
 
-const UserSchema = new Schema(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    boards: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Board",
-      }
-    ]
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    trim: true,
   },
-  { timestamps: true }
-);
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+  },
+  image: {
+    type: String,
+  },
+  isGuest: {
+    type: Boolean,
+    default: false,
+  },
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+  boards: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      // use to tell mongoose that elements inside of boards array will ref to other MOdels
+      ref: "Board",
+    },
+  ],
+});
+
+export default mongoose.models.User || mongoose.model("User", userSchema);
