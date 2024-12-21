@@ -47,6 +47,30 @@ export async function POST(req) {
   }
 }
 
+export async function GET() {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
+    }
+
+    await connectMongo();
+
+    // Find the user and populate the boards
+    const user = await User.findById(session.user.id).populate("boards");
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Return the boards
+    return NextResponse.json(user.boards);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function DELETE(req) {
   try {
     const { searchParams } = req.nextUrl;
