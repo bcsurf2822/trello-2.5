@@ -1,6 +1,7 @@
 import React from "react";
 import ButtonLogin from "../buttons/ButtonLogin";
 import { auth } from "@/auth";
+import Link from "next/link";
 
 export default async function NavBar() {
   const session = await auth();
@@ -38,7 +39,7 @@ export default async function NavBar() {
           <li><a>Item 3</a></li>
         </ul> */}
         </div>
-        <a className="btn btn-ghost text-xl text-primary">Trello 2.5</a>
+        <Link href={"/dashboard"} className="btn btn-ghost text-xl text-primary">Trello 2.5</Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         {/* <ul className="menu menu-horizontal px-1">
