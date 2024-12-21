@@ -25,7 +25,7 @@ export default async function BoardPage({ params }) {
 
   return (
     <main>
-      <h1>{board?.name || "Board not found"}</h1>
+      <h1>{board?.name}</h1>
     </main>
   );
 }
