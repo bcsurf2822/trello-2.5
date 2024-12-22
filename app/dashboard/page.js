@@ -10,7 +10,7 @@ import { fetchBoards } from "@/utils/apiCalls";
 
 export default function DashBoard() {
   const queryClient = useQueryClient();
-
+  const shouldFetch = true
   // Fetch boards using useQuery
   const {
     data: boards = [],
@@ -18,17 +18,24 @@ export default function DashBoard() {
     isError,
   } = useQuery({
     queryKey: ["boards"],
-    queryFn: fetchBoards,
+    queryFn: () => fetchBoards(shouldFetch),
+    enabled: shouldFetch,
   });
 
   // Mutation for deleting a board
   const deleteBoardMutation = useMutation({
+    mutationKey: ["deleteBoard"],
     mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
-    onSuccess: () => {
-      // Invalidate the query to refresh the data
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(["boards"], (oldBoards = []) =>
+        oldBoards.filter((board) => board._id !== variables) // Use `variables` for boardId
+      );
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
   });
+
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
@@ -73,7 +80,7 @@ export default function DashBoard() {
               </Link>
 
               <DeleteBoardButton
-                onDelete={() => handleBoardDelete(board._id)}
+                onDelete={() => handleBoardDelete(board._id.toString())}
                 boardId={board._id.toString()}
               />
             </div>

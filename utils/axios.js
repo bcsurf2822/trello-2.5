@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "/api", 
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,7 +13,6 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-
     console.error("Request Error:", error);
     return Promise.reject(error);
   }
