@@ -63,16 +63,8 @@ export const dummyBoardData = {
     {
       _id: "list-6543",
       name: "Done",
-      cards: [
-        {
-          _id: "card-7890",
-          name: "Plan team meeting",
-          description: "This is a description of the task.",
-          createdAt: "2024-12-21T14:56:00.000Z",
-        },
-      ],
+      cards: [],
     },
   ],
   createdAt: "2024-12-21T14:55:00.000Z",
 };
-
