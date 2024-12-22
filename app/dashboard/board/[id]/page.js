@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Board from "@/models/Board";
 import List from "@/components/boardsUI/List";
 import AddList from "@/components/boardsUI/AddListButton";
+import { fetchBoardData } from "@/utils/apiCalls";
 
 
 const getBoard = async (boardId) => {
