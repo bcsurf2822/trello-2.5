@@ -21,6 +21,7 @@ const getBoard = async (boardId) => {
 };
 
 export default async function BoardPage({ params }) {
+  const empyArray = [];
   console.log("Dummy", dummyBoardData);
   const { id } = params;
 
@@ -33,6 +34,15 @@ export default async function BoardPage({ params }) {
         {dummyBoardData.lists.map((list) => (
           <List key={list._id} list={list} />
         ))}
+
+        <div className="bg-green-100 pb-2 rounded-lg ">
+
+            <button className=" text-black w-full py-2 hover:bg-slate-400 flex items-center justify-center">
+              Add List
+
+            </button>
+  
+        </div>
       </section>
     </main>
   );
