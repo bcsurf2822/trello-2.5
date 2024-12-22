@@ -57,14 +57,14 @@ export async function GET() {
 
     await connectMongo();
 
-    // Find the user and populate the boards
+
     const user = await User.findById(session.user.id).populate("boards");
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Return the boards
+
     return NextResponse.json(user.boards);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

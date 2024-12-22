@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Board from "@/models/Board";
 import { dummyBoardData } from "@/data/boardData";
 import List from "@/components/boardsUI/List";
+import AddList from "@/components/boardsUI/AddListButton";
 
 const getBoard = async (boardId) => {
   const session = await auth();
@@ -21,24 +22,23 @@ const getBoard = async (boardId) => {
 };
 
 export default async function BoardPage({ params }) {
-  const { id } = params;
-  const empyArray = {lists: []};
+  const { id: boardId } = params;
+  if (!boardId) {
+    redirect("/dashboard");
+  }
+  const empyArray = { lists: [] };
   console.log("Dummy", dummyBoardData);
-  const board = await getBoard(id);
+  const board = await getBoard(boardId);
 
   return (
     <main className="flex flex-col gap-2">
       <h1 className="text-3xl font-bold">{board?.name}</h1>
       <section className="flex gap-4 justify-between mx-2 ">
-        {dummyBoardData.lists.length > 0 &&
-          dummyBoardData.lists.map((list) => (
-            <List key={list._id} list={list} />
-          ))}
+        {board?.lists.length > 0 &&
+          board.lists.map((list) => <List key={list._id} list={list} />)}
 
-        <div className="bg-green-100 pb-2 rounded-lg ">
-          <button className=" text-black w-full py-2 hover:bg-slate-400 flex items-center justify-center">
-            Add List
-          </button>
+        <div className="w-1/2">
+          <AddList boardId={boardId} />
         </div>
       </section>
     </main>

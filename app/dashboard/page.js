@@ -56,7 +56,7 @@ export default function DashBoard() {
             <div className="bg-gray-100 hover:bg-gray-200 rounded-lg h-28 flex items-center justify-between">
               <Link
                 className="ml-4 text-lg font-bold hover:text-blue-500"
-                href={`/dashboard/board/${board._id}`}
+                href={`/dashboard/board/${board._id.toString()}`}
               >
                 {board.name}
               </Link>
