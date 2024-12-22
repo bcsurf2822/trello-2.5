@@ -2,9 +2,9 @@ import { auth } from "@/auth";
 import { connectMongo } from "@/lib/mongoose";
 import { redirect } from "next/navigation";
 import Board from "@/models/Board";
-import { dummyBoardData } from "@/data/boardData";
 import List from "@/components/boardsUI/List";
 import AddList from "@/components/boardsUI/AddListButton";
+
 
 const getBoard = async (boardId) => {
   const session = await auth();
@@ -26,8 +26,7 @@ export default async function BoardPage({ params }) {
   if (!boardId) {
     redirect("/dashboard");
   }
-  const empyArray = { lists: [] };
-  console.log("Dummy", dummyBoardData);
+
   const board = await getBoard(boardId);
 
   return (
