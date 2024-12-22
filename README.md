@@ -2,7 +2,7 @@
 
 ## Summary
 
-This project was originially built by Joseph Lieu, Nick, and mySelf. As a challenge I wanted to update and deploy this project within Next.js.
+This project was originially built by Joseph Lieu, Nicholas Lopez, and myself. As a challenge I wanted to update and deploy this project within the Next.js framework.
 
 ## Getting Started
 
