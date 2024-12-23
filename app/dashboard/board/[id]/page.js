@@ -20,7 +20,7 @@ export default function BoardPage({ params }) {
       <h1 className="text-3xl font-bold">{board?.name}</h1>
       <section className="flex gap-4 justify-between mx-2">
       {board?.lists?.map((list) => (
-    <List key={list._id} list={list} />
+    <List key={list._id} list={list} boardId={id} />
   ))}
   <AddList boardId={id} />
       </section>

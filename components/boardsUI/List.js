@@ -1,19 +1,34 @@
-export default function List({ list }) {
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+
+export default function List({ list, boardId }) {
+  console.log("List", list);
+
+  const listId = list._id;
+
+  const queryClient = useQueryClient();
+
+  // Delete Mutation
+  const deleteMutation = useMutation({
+    mutationFn: ({ boardId, listId }) => {
+      return axios.delete("/api/list", { data: { boardId, listId } });
+    },
+    onSuccess: () => {
+      console.log("List deleted successfully");
+      // Invalidate the board's lists query to refetch the updated data
+      queryClient.invalidateQueries(["board", list.boardId]);
+    },
+    onError: (error) => {
+      console.error(
+        "Error deleting list:",
+        error.response?.data || error.message
+      );
+    },
+  });
+
   const handleDeleteList = () => {
-    console.log("list delete")
-  }
-
-  const handleAddList = () => {
-    console.log("list add")
-  }
-
-  const handleDeleteCard = () => {
-    console.log("card delete")
-  }
-
-  const handleAddCard = () => {
-    console.log("card add ")
-  }
+    deleteMutation.mutate({ boardId: boardId, listId: listId});
+  };
 
   return (
     <div className="bg-neutral-100 w-1/4 pb-2 rounded-lg">
@@ -26,6 +41,7 @@ export default function List({ list }) {
           strokeWidth={1.5}
           stroke="currentColor"
           className="size-6 hover:text-red-500 cursor-pointer"
+          onClick={handleDeleteList}
         >
           <path
             strokeLinecap="round"
