@@ -10,7 +10,7 @@ import { fetchBoards } from "@/utils/apiCalls";
 
 export default function DashBoard() {
   const queryClient = useQueryClient();
-  const shouldFetch = true
+  const shouldFetch = true;
   // Fetch boards using useQuery
   const {
     data: boards = [],
@@ -27,15 +27,15 @@ export default function DashBoard() {
     mutationKey: ["deleteBoard"],
     mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
     onSuccess: (data, variables) => {
-      queryClient.setQueryData(["boards"], (oldBoards = []) =>
-        oldBoards.filter((board) => board._id !== variables) // Use `variables` for boardId
+      queryClient.setQueryData(
+        ["boards"],
+        (oldBoards = []) => oldBoards.filter((board) => board._id !== variables) // Use `variables` for boardId
       );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
   });
-
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();

@@ -74,7 +74,9 @@ export async function DELETE(req) {
     }
 
     // Find the list to delete
-    const listIndex = board.lists.findIndex((list) => list._id.toString() === listId);
+    const listIndex = board.lists.findIndex(
+      (list) => list._id.toString() === listId
+    );
 
     if (listIndex === -1) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });

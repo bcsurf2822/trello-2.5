@@ -5,11 +5,10 @@ import { useState } from "react";
 export default function AddCardButton(data) {
   const [isAdding, setIsAdding] = useState(false);
   const [cardName, setCardName] = useState("");
-  console.log("AddCard Data:", data)
+  console.log("AddCard Data:", data);
 
-
-  const boardId = data.boardId
-  const listId = data.listId
+  const boardId = data.boardId;
+  const listId = data.listId;
 
   const createCardMutation = useCreateCard(boardId, listId);
 
@@ -34,7 +33,7 @@ export default function AddCardButton(data) {
       {
         onSuccess: () => {
           setIsAdding(false);
-          setCardName(""); 
+          setCardName("");
         },
       }
     );

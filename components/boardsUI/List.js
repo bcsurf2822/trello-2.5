@@ -64,7 +64,7 @@ export default function List({ list, boardId }) {
 
       {/* Always render AddCardButton */}
       <div className="mt-2">
-        <AddCardButton boardId={boardId} listId={listId}  />
+        <AddCardButton boardId={boardId} listId={listId} />
       </div>
     </div>
   );
