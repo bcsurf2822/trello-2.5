@@ -10,7 +10,7 @@ export default function DeleteBoardButton({ onDelete, boardId }) {
     try {
       const isSure = window.confirm("Are you sure you want to delete?");
       if (isSure) {
-        await axios.delete(`/api/board?boardId=${boardId}`);
+        await axios.delete(`/api/boards?boardId=${boardId}`);
         onDelete(boardId);
         toast.success("Board Deleted!");
       }

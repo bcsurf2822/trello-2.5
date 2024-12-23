@@ -1,14 +1,20 @@
 "use client";
 import axios from "axios";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function AddList({ boardId }) {
   const [listName, setListName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const queryClient = useQueryClient();
+
   const handleInputChange = (e) => {
     setListName(e.target.value);
   };
+
+
+
 
   const handleSubmit = async () => {
     if (listName.trim() === "") return;
@@ -21,7 +27,6 @@ export default function AddList({ boardId }) {
       });
       console.log("List added:", response.data);
 
-      // Optionally refresh or update lists in parent component here
     } catch (error) {
       console.error(
         "Error adding list:",

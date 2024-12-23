@@ -1,4 +1,3 @@
-//Next Response : helper to help us format our response
 
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";

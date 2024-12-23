@@ -5,8 +5,6 @@ export const fetchBoards = async (shouldFetch = true) => {
     return [];
   }
 
-  const response = await axiosInstance.get("/board");
+  const response = await axiosInstance.get("/boards");
   return response.data;
 };
-
-

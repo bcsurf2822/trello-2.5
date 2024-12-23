@@ -20,6 +20,8 @@ function makeQueryClient() {
 let browserQueryClient;
 
 function getQueryClient() {
+  const isServer = typeof window === "undefined";
+
   if (isServer) {
     return makeQueryClient();
   } else {
@@ -34,7 +36,7 @@ export default function Providers({ children }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
