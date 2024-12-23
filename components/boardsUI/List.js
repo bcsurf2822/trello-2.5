@@ -3,6 +3,7 @@ import axios from "axios";
 import AddCardButton from "./AddCardButton";
 
 export default function List({ list, boardId }) {
+  console.log("List Object:", list);
   const listId = list._id;
 
   const queryClient = useQueryClient();
@@ -49,7 +50,7 @@ export default function List({ list, boardId }) {
         </svg>
       </div>
 
-      {list.cards.length > 0 ? (
+      {list.cards.length > 0 && (
         <ul className="flex flex-col gap-1">
           {list.cards.map((card) => (
             <li key={card._id}>
@@ -59,11 +60,12 @@ export default function List({ list, boardId }) {
             </li>
           ))}
         </ul>
-      ) : (
-        <div className="">
-          <AddCardButton />
-        </div>
       )}
+
+      {/* Always render AddCardButton */}
+      <div className="mt-2">
+        <AddCardButton boardId={boardId} listId={listId}  />
+      </div>
     </div>
   );
 }

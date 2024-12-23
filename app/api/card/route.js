@@ -7,9 +7,23 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-    if (!body.boardId || !body.listId || !body.name) {
+    if (!body.boardId) {
       return NextResponse.json(
-        { error: "Board ID, List ID, and Card Name are required" },
+        { error: "Board ID is required" },
+        { status: 400 }
+      );
+    }
+    
+    if (!body.listId) {
+      return NextResponse.json(
+        { error: "List ID is required" },
+        { status: 400 }
+      );
+    }
+    
+    if (!body.name) {
+      return NextResponse.json(
+        { error: "Card Name is required" },
         { status: 400 }
       );
     }

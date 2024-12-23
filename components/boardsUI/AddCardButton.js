@@ -1,9 +1,17 @@
 "use client";
+import { useCreateCard } from "@/hooks/useCreateCard";
 import { useState } from "react";
 
-export default function AddCardButton(boardId, listId) {
+export default function AddCardButton(data) {
   const [isAdding, setIsAdding] = useState(false);
   const [cardName, setCardName] = useState("");
+  console.log("AddCard Data:", data)
+
+
+  const boardId = data.boardId
+  const listId = data.listId
+
+  const createCardMutation = useCreateCard(boardId, listId);
 
   const handleAddCardClick = () => {
     setIsAdding(true);
@@ -12,6 +20,24 @@ export default function AddCardButton(boardId, listId) {
   const handleCancel = () => {
     setIsAdding(false);
     setCardName("");
+  };
+
+  const handleSaveCard = () => {
+    if (!cardName.trim()) return;
+
+    createCardMutation.mutate(
+      {
+        boardId,
+        listId,
+        name: cardName,
+      },
+      {
+        onSuccess: () => {
+          setIsAdding(false);
+          setCardName(""); 
+        },
+      }
+    );
   };
 
   return (
@@ -26,7 +52,13 @@ export default function AddCardButton(boardId, listId) {
             className="input input-bordered input-sm w-full"
           />
           <div className="flex gap-2">
-            <button className="btn btn-primary btn-sm">Save</button>
+            <button
+              onClick={handleSaveCard}
+              disabled={createCardMutation.isLoading}
+              className="btn btn-primary btn-sm"
+            >
+              Save
+            </button>
             <button onClick={handleCancel} className="btn btn-secondary btn-sm">
               Cancel
             </button>
