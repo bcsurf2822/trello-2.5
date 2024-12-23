@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import AddCardButton from "./AddCardButton";
 
 export default function List({ list, boardId }) {
   const listId = list._id;
@@ -59,24 +60,8 @@ export default function List({ list, boardId }) {
           ))}
         </ul>
       ) : (
-        <div className="empty-list">
-          <button className="bg-neutral-300 text-black w-full  py-2 hover:bg-slate-400 pr-2 flex justify-end items-center gap-2">
-            Add Card{" "}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          </button>
+        <div className="">
+          <AddCardButton />
         </div>
       )}
     </div>
