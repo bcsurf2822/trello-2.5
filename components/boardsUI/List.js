@@ -2,20 +2,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 export default function List({ list, boardId }) {
-  console.log("List", list);
-
   const listId = list._id;
 
   const queryClient = useQueryClient();
 
-  // Delete Mutation
   const deleteMutation = useMutation({
     mutationFn: ({ boardId, listId }) => {
       return axios.delete("/api/list", { data: { boardId, listId } });
     },
     onSuccess: () => {
       console.log("List deleted successfully");
-      // Invalidate the board's lists query to refetch the updated data
+
       queryClient.invalidateQueries(["board", list.boardId]);
     },
     onError: (error) => {
@@ -27,7 +24,7 @@ export default function List({ list, boardId }) {
   });
 
   const handleDeleteList = () => {
-    deleteMutation.mutate({ boardId: boardId, listId: listId});
+    deleteMutation.mutate({ boardId: boardId, listId: listId });
   };
 
   return (
