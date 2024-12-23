@@ -1,59 +1,58 @@
 "use client";
-import axios from "axios";
-import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function AddList({ boardId }) {
-  const [listName, setListName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const queryClient = useQueryClient();
 
-  const handleInputChange = (e) => {
-    setListName(e.target.value);
-  };
-
-
-
-
-  const handleSubmit = async () => {
-    if (listName.trim() === "") return;
-
-    setIsLoading(true);
-    try {
-      const response = await axios.post("/api/list", {
-        boardId,
-        name: listName,
-      });
-      console.log("List added:", response.data);
-
-    } catch (error) {
+  const mutation = useMutation({
+    mutationFn: (formData) => {
+      return axios.post("/api/list", formData);
+    },
+    onSuccess: (data) => {
+      console.log("List added:", data.data);
+      queryClient.invalidateQueries(["lists", boardId]);
+    },
+    onError: (error) => {
       console.error(
         "Error adding list:",
         error.response?.data || error.message
       );
-    } finally {
-      setIsLoading(false);
-      setListName("");
-    }
+    },
+  });
+
+  const onSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = {
+      boardId,
+      name: event.target.elements.listName.value.trim(),
+    };
+
+    if (formData.name === "") return;
+
+    mutation.mutate(formData);
+    event.target.reset();
   };
 
   return (
-    <div className="w-1/4 bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center gap-2 px-4">
+    <form
+      onSubmit={onSubmit}
+      className="w-1/4 bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center gap-2 px-4"
+    >
       <input
         type="text"
+        name="listName"
         placeholder="Type here"
         className="input input-bordered input-sm w-full max-w-xs"
-        value={listName}
-        onChange={handleInputChange}
       />
       <button
-        onClick={handleSubmit}
-        disabled={isLoading}
+        type="submit"
+        disabled={mutation.isLoading}
         className="btn btn-primary w-full"
       >
-      {isLoading ? "Adding..." : "Add List"}
+        {mutation.isLoading ? "Adding..." : "Add List"}
       </button>
-    </div>
+    </form>
   );
 }
