@@ -13,7 +13,7 @@ const FormNewBoard = ({ closeModal, onBoardCreate }) => {
     if (isLoading) return;
     setIsLoading(true);
     try {
-      const { data } = await axios.post("/api/board", { name });
+      const { data } = await axios.post("/api/boards", { name });
       setName("");
       toast.success("Board Successfully Created");
       onBoardCreate(data); 

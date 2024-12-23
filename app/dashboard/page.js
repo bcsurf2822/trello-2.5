@@ -2,39 +2,58 @@
 
 import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
-import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
+import axiosInstance from "@/utils/axios";
+import { fetchBoards } from "@/utils/apiCalls";
 
 export default function DashBoard() {
-  const [boards, setBoards] = useState([]);
+  const queryClient = useQueryClient();
+  const shouldFetch = true;
+  // Fetch boards using useQuery
+  const {
+    data: boards = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["boards"],
+    queryFn: () => fetchBoards(shouldFetch),
+    enabled: shouldFetch,
+  });
+
+  // Mutation for deleting a board
+  const deleteBoardMutation = useMutation({
+    mutationKey: ["deleteBoard"],
+    mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData(
+        ["boards"],
+        (oldBoards = []) => oldBoards.filter((board) => board._id !== variables) // Use `variables` for boardId
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    },
+  });
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
-  useEffect(() => {
-    const fetchBoards = async () => {
-      try {
-        const response = await axios.get("/api/board");
-        console.log(response);
-        setBoards(response.data);
-      } catch (error) {
-        console.error("Error fetching boards:", error);
-      }
-    };
-
-    fetchBoards();
-  }, []);
-
   const handleBoardDelete = (boardId) => {
-    setBoards((prevBoards) =>
-      prevBoards.filter((board) => board._id !== boardId)
-    );
+    deleteBoardMutation.mutate(boardId);
   };
 
   const handleBoardCreate = (newBoard) => {
-    setBoards((prevBoards) => [...prevBoards, newBoard]);
+    // Optimistically update the UI
+    queryClient.setQueryData(["boards"], (oldBoards = []) => [
+      ...oldBoards,
+      newBoard,
+    ]);
   };
+
+  if (isLoading) return <p>Loading boards...</p>;
+  if (isError) return <p>Error loading boards. Please try again.</p>;
 
   return (
     <div className="mt-16 mx-8">
@@ -49,7 +68,6 @@ export default function DashBoard() {
         >
           <p className="ml-2 font-bold">Add Board</p>
         </div>
-        {/* <Boards /> */}
 
         {boards.map((board) => (
           <div key={board._id} className="group">
@@ -62,7 +80,7 @@ export default function DashBoard() {
               </Link>
 
               <DeleteBoardButton
-                onDelete={handleBoardDelete}
+                onDelete={() => handleBoardDelete(board._id.toString())}
                 boardId={board._id.toString()}
               />
             </div>
