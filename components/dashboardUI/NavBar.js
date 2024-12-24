@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
 
+
 export default async function NavBar() {
   const session = await auth();
   return (
