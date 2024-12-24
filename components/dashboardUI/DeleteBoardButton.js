@@ -23,7 +23,7 @@ export default function DeleteBoardButton({ onDelete, boardId }) {
   };
 
   return (
-    <button className="btn btn-ghost hover:bg-red-500 hover:text-white" onClick={handleDeleteBoard}>
+    <button className="btn btn-ghost hover:bg-red-500 hover:text-white mr-2" onClick={handleDeleteBoard}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"

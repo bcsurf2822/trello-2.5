@@ -50,10 +50,9 @@ export default function DashBoard() {
 
   return (
     <div className="mt-16 mx-8">
-      <div className="border-b-2 border-slate-300">
-        <h1 className="text-2xl font-bold mb-2">Projects</h1>
+      <div className="border-b-2 border-slate-300 mb-2">
+        <h1 className="text-2xl font-bold mb-2">Your Boards</h1>
       </div>
-      <p className="mt-10 text-xl mb-4">Boards</p>
       <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
         <div
           className="rounded-lg border-2 border-dashed border-gray-300 hover:border-blue-700 h-28 flex items-center cursor-pointer"

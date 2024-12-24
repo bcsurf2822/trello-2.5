@@ -43,13 +43,13 @@ export default function AddList({ boardId }) {
       <input
         type="text"
         name="listName"
-        placeholder="Type here"
+        placeholder="List Name"
         className="input input-bordered input-sm w-full max-w-xs"
       />
       <button
         type="submit"
         disabled={mutation.isLoading}
-        className="btn btn-primary w-full"
+        className="btn btn-primary w-1/2"
       >
         {mutation.isLoading ? "Adding..." : "Add List"}
       </button>

@@ -30,7 +30,7 @@ export default function List({ list, boardId }) {
   };
 
   return (
-    <div className="bg-neutral-100 w-1/4 pb-2 rounded-lg">
+    <div className="bg-neutral-100 w-[20vw] pb-2 rounded-lg">
       <div className="flex justify-between items-center py-2 px-1">
         <h2 className="underline font-semibold pl-2">{list.name}</h2>
         <svg
