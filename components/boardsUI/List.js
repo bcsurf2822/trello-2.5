@@ -4,7 +4,6 @@ import AddCardButton from "./AddCardButton";
 import Cards from "./Cards";
 
 export default function List({ list, boardId }) {
-  console.log("List Object:", list);
   const listId = list._id;
 
   const queryClient = useQueryClient();
@@ -64,7 +63,6 @@ export default function List({ list, boardId }) {
         </ul>
       )}
 
-      {/* Always render AddCardButton */}
       <div className="mt-2">
         <AddCardButton boardId={boardId} listId={listId} />
       </div>

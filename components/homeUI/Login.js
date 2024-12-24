@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import ButtonLogin from "../buttons/ButtonLogin";
+import ButtonLogin from "../authenticationUI/ButtonLogin";
 import { redirect } from "next/navigation";
 import axios from "axios";
 

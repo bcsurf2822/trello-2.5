@@ -1,4 +1,4 @@
-import ButtonLogout from "@/components/buttons/ButtonLogout";
+import ButtonLogout from "@/components/authenticationUI/ButtonLogout";
 import Login from "@/components/homeUI/Login";
 
 export default async function Home() {
