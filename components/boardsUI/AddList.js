@@ -38,7 +38,7 @@ export default function AddList({ boardId }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="w-1/4 bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center gap-2 px-4"
+      className="w-[20vw] bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center justify-center gap-2 px-4"
     >
       <input
         type="text"
