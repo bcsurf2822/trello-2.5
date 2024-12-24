@@ -73,7 +73,6 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-    // Find the list to delete
     const listIndex = board.lists.findIndex(
       (list) => list._id.toString() === listId
     );
@@ -82,7 +81,7 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });
     }
 
-    // Remove the list from the board
+  
     board.lists.splice(listIndex, 1);
     await board.save();
 
@@ -91,3 +90,44 @@ export async function DELETE(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req) {
+  try {
+    const body = await req.json();
+
+    if (!body.boardId || !body.lists) {
+      return NextResponse.json(
+        { error: "Board ID and lists are required" },
+        { status: 400 }
+      );
+    }
+
+    const session = await auth();
+
+    if (!session) {
+      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
+    }
+
+    await connectMongo();
+
+    const board = await Board.findOne({
+      _id: body.boardId,
+      userId: session.user.id,
+    });
+
+    if (!board) {
+      return NextResponse.json({ error: "Board not found" }, { status: 404 });
+    }
+
+ 
+    board.lists = body.lists;
+
+    await board.save();
+
+    return NextResponse.json({ message: "Lists reordered successfully", board });
+  } catch (error) {
+    console.error("Error saving list order:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
