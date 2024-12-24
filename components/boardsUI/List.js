@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import AddCardButton from "./AddCardButton";
+import Cards from "./Cards";
 
 export default function List({ list, boardId }) {
   console.log("List Object:", list);
@@ -53,11 +54,12 @@ export default function List({ list, boardId }) {
       {list.cards.length > 0 && (
         <ul className="flex flex-col gap-1">
           {list.cards.map((card) => (
-            <li key={card._id}>
-              <button className="bg-neutral-300 text-black w-full text-start py-2 hover:bg-slate-400 pl-2">
-                {card.name}
-              </button>
-            </li>
+            <Cards
+              key={card._id}
+              card={card}
+              boardId={boardId}
+              listId={list._id}
+            />
           ))}
         </ul>
       )}
