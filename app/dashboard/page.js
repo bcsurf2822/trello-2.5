@@ -11,7 +11,6 @@ import { fetchBoards } from "@/utils/apiCalls";
 export default function DashBoard() {
   const queryClient = useQueryClient();
   const shouldFetch = true;
-  // Fetch boards using useQuery
   const {
     data: boards = [],
     isLoading,
@@ -22,14 +21,12 @@ export default function DashBoard() {
     enabled: shouldFetch,
   });
 
-  // Mutation for deleting a board
   const deleteBoardMutation = useMutation({
     mutationKey: ["deleteBoard"],
     mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
     onSuccess: (data, variables) => {
-      queryClient.setQueryData(
-        ["boards"],
-        (oldBoards = []) => oldBoards.filter((board) => board._id !== variables) // Use `variables` for boardId
+      queryClient.setQueryData(["boards"], (oldBoards = []) =>
+        oldBoards.filter((board) => board._id !== variables)
       );
     },
     onSettled: () => {
@@ -45,15 +42,11 @@ export default function DashBoard() {
   };
 
   const handleBoardCreate = (newBoard) => {
-    // Optimistically update the UI
     queryClient.setQueryData(["boards"], (oldBoards = []) => [
       ...oldBoards,
       newBoard,
     ]);
   };
-
-  if (isLoading) return <p>Loading boards...</p>;
-  if (isError) return <p>Error loading boards. Please try again.</p>;
 
   return (
     <div className="mt-16 mx-8">
@@ -69,23 +62,28 @@ export default function DashBoard() {
           <p className="ml-2 font-bold">Add Board</p>
         </div>
 
-        {boards.map((board) => (
-          <div key={board._id} className="group">
-            <div className="bg-gray-100 hover:bg-gray-200 rounded-lg h-28 flex items-center justify-between">
-              <Link
-                className="ml-4 text-lg font-bold hover:text-blue-500"
-                href={`/dashboard/board/${board._id}`}
-              >
-                {board.name}
-              </Link>
+        {isLoading && <span className="loading loading-bars loading-md"></span>}
+        {isError && <p>Error loading boards. Please try again.</p>}
 
-              <DeleteBoardButton
-                onDelete={() => handleBoardDelete(board._id.toString())}
-                boardId={board._id.toString()}
-              />
+        {!isLoading &&
+          !isError &&
+          boards.map((board) => (
+            <div key={board._id} className="group">
+              <div className="bg-gray-100 hover:bg-gray-200 rounded-lg h-28 flex items-center justify-between">
+                <Link
+                  className="ml-4 text-lg font-bold hover:text-blue-500"
+                  href={`/dashboard/board/${board._id}`}
+                >
+                  {board.name}
+                </Link>
+
+                <DeleteBoardButton
+                  onDelete={() => handleBoardDelete(board._id.toString())}
+                  boardId={board._id.toString()}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
 
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
