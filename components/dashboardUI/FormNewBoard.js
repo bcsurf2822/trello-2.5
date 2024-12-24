@@ -16,7 +16,7 @@ const FormNewBoard = ({ closeModal, onBoardCreate }) => {
       const { data } = await axios.post("/api/boards", { name });
       setName("");
       toast.success("Board Successfully Created");
-      onBoardCreate(data); 
+      onBoardCreate(data);
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || error.message || "Something went wrong";
@@ -28,28 +28,35 @@ const FormNewBoard = ({ closeModal, onBoardCreate }) => {
     }
   };
 
+  const handleClose = (e) => {
+    e.preventDefault();
+    closeModal();
+  };
+
   return (
     <form className="bg-base-100 p-8 rounded-3xl space-y-8">
       {/* TITLE */}
-      <p className="font-bold text-lg">Create board</p>
-      <button
-        onClick={closeModal}
-        className="text-gray-200 hover:bg-gray-200 hover:text-black p-1 rounded"
-      >
-        ✕
-      </button>
+      <div className="flex justify-between">
+        <p className="font-bold text-lg">Create board</p>
+        <button
+          onClick={handleClose}
+          className="text-red-500 bg-gray-200 hover:bg-gray-300 font-bold p-1 rounded"
+        >
+          ✕
+        </button>
+      </div>
 
       {/* FORM */}
       <label className="form-control block mt-4">
-        <div className="label">
-          <span className="text-md font-bold">Board Title</span>
+        <div className="label flex flex-col items-start">
+          <span className="text-md font-bold">Title</span>
         </div>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter board name"
-          className="border-black border rounded mt-1 w-full"
+          className="border-black border rounded mt-1 pl-1 w-full"
         />
       </label>
       {/* BUTTON */}

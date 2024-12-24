@@ -38,18 +38,18 @@ export default function AddList({ boardId }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="w-1/4 bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center gap-2 px-4"
+      className="w-[20vw] bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center justify-center gap-2 px-4"
     >
       <input
         type="text"
         name="listName"
-        placeholder="Type here"
+        placeholder="List Name"
         className="input input-bordered input-sm w-full max-w-xs"
       />
       <button
         type="submit"
         disabled={mutation.isLoading}
-        className="btn btn-primary w-full"
+        className="btn btn-primary w-1/2"
       >
         {mutation.isLoading ? "Adding..." : "Add List"}
       </button>

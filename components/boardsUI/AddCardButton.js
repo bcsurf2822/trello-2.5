@@ -42,15 +42,15 @@ export default function AddCardButton(data) {
   return (
     <div>
       {isAdding ? (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 justify-center items-center">
           <input
             type="text"
             placeholder="Enter card name"
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
-            className="input input-bordered input-sm w-full"
+            className="input input-bordered input-sm w-full px-1"
           />
-          <div className="flex gap-2">
+          <div className="flex gap-2  w-full justify-end mr-2">
             <button
               onClick={handleSaveCard}
               disabled={createCardMutation.isLoading}
@@ -58,7 +58,7 @@ export default function AddCardButton(data) {
             >
               Save
             </button>
-            <button onClick={handleCancel} className="btn btn-secondary btn-sm">
+            <button onClick={handleCancel} className="btn btn-error btn-sm">
               Cancel
             </button>
           </div>
