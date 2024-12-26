@@ -1,9 +1,7 @@
 import axiosInstance from "./axios";
 
-export const fetchBoards = async (shouldFetch = true) => {
-  if (!shouldFetch) {
-    return [];
-  }
+export const fetchBoards = async () => {
+
 
   const response = await axiosInstance.get("/boards");
   return response.data;

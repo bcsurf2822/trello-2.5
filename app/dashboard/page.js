@@ -3,32 +3,15 @@
 import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 
-import { fetchBoards } from "@/utils/apiCalls";
+// import { fetchBoards } from "@/utils/apiCalls";
+import { useFetchBoards } from "@/hooks/useFetchBoards";
 
 export default function DashBoard() {
-  const queryClient = useQueryClient();
-  const shouldFetch = true;
-  const {
-    data: boards = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["boards"],
-    queryFn: () => fetchBoards(shouldFetch),
-    enabled: shouldFetch,
-  });
-
+  const { data: boards = [], isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
-
-  const handleBoardCreate = (newBoard) => {
-    queryClient.setQueryData(["boards"], (oldBoards = []) => [
-      ...oldBoards,
-      newBoard,
-    ]);
-  };
 
   return (
     <div className="mt-16 mx-8">
@@ -65,10 +48,7 @@ export default function DashBoard() {
 
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
-            <FormNewBoard
-              onBoardCreate={handleBoardCreate}
-              closeModal={closeModal}
-            />
+            <FormNewBoard closeModal={closeModal} />
           </div>
         </dialog>
       </div>

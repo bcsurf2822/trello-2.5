@@ -6,10 +6,10 @@ const ButtonLogout = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const guestSession = localStorage.getItem("guestSession");
+    const guestSession = localStorage.getItem("user");
 
     if (guestSession) {
-      localStorage.removeItem("guestSession");
+      localStorage.removeItem("user");
     } else {
       await signOut({ redirect: false });
     }
