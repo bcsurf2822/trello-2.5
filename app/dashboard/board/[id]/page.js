@@ -56,7 +56,6 @@ export default function BoardPage({ params }) {
           ))}
         </Reorder.Group>
         <div>
-     
           <AddList boardId={id} />
         </div>
       </section>

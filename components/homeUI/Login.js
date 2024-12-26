@@ -2,6 +2,7 @@
 import { loginAsGuest } from "@/utils/guestLogin";
 import ButtonLogin from "../authenticationUI/ButtonLogin";
 import {  useRouter } from "next/navigation";
+import ButtonGuestLogin from "../authenticationUI/ButtonGuestLogin";
 
 export default function Login() {
   const router = useRouter();
@@ -45,13 +46,14 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Continue as
               </h1>
-              <button
+              {/* <button
                 onClick={handleGuestSignIn}
                 className="bg-green-300 px-4 py-1 rounded-xl text-gray-950 font-bold"
                 href="/dashboard"
               >
                 Guest
-              </button>
+              </button> */}
+              <ButtonGuestLogin />
             </div>
           </div>
         </div>

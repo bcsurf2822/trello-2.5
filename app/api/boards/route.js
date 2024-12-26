@@ -4,9 +4,16 @@ import { auth } from "@/auth";
 import User from "@/models/User";
 import Board from "@/models/Board";
 import { connectMongo } from "@/lib/mongoose";
+import { getSessionInfo } from "@/utils/getSessionInfo";
 
 export async function POST(req) {
   try {
+    const session = await getSessionInfo(req);
+
+    if (!session) {
+      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     if (!body.name) {
       return NextResponse.json(
@@ -15,24 +22,27 @@ export async function POST(req) {
       );
     }
 
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     await connectMongo();
 
-    const user = await User.findById(session.user.id);
+    let user;
+    if (session.isGuest) {
+      user = session.user;
+    } else {
+      user = await User.findById(session.user.id);
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+    }
 
     const board = await Board.create({
-      userId: user._id,
+      userId: user.id,
       name: body.name,
     });
 
-    user.boards.push(board._id);
-
-    await user.save();
+    if (!session.isGuest) {
+      user.boards.push(board._id);
+      await user.save();
+    }
 
     return NextResponse.json(board);
   } catch (error) {
@@ -42,13 +52,17 @@ export async function POST(req) {
 
 export async function GET() {
   try {
-    const session = await auth();
+    const session = await getSessionInfo();
 
     if (!session) {
       return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
     }
 
     await connectMongo();
+
+    if (session.isGuest) {
+      return NextResponse.json([]);
+    }
 
     const user = await User.findById(session.user.id).populate("boards");
 
@@ -64,26 +78,26 @@ export async function GET() {
 
 export async function DELETE(req) {
   try {
-    const { searchParams } = req.nextUrl;
-    const boardId = searchParams.get("boardId");
-
-    if (!boardId) {
-      return NextResponse.json(
-        { error: "boardId is required" },
-        { status: 400 }
-      );
-    }
-
-    const session = await auth();
+    const session = await getSessionInfo(req);
 
     if (!session) {
       return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
     }
 
-    console.log("Board ID:", boardId);
-    console.log("Session User ID:", session?.user?.id);
+    const { searchParams } = req.nextUrl;
+    const boardId = searchParams.get("boardId");
 
-    const user = await User.findById(session?.user?.id);
+    if (!boardId) {
+      return NextResponse.json(
+        { error: "Board ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await connectMongo();
+
+
+    const user = await User.findById(session.user.id);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -91,9 +105,8 @@ export async function DELETE(req) {
 
     await Board.deleteOne({
       _id: boardId,
-      userId: session?.user?.id,
+      userId: session.user.id,
     });
-
 
     user.boards = user.boards.filter((id) => id.toString() !== boardId);
     await user.save();
@@ -103,7 +116,6 @@ export async function DELETE(req) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting board:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

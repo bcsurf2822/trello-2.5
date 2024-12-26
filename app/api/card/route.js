@@ -2,9 +2,16 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectMongo } from "@/lib/mongoose";
 import Board from "@/models/Board";
+import { getSessionInfo } from "@/utils/getSessionInfo";
 
 export async function POST(req) {
   try {
+    const session = await getSessionInfo(req);
+
+    if (!session) {
+      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
+    }
+
     const body = await req.json();
 
     if (!body.boardId) {
@@ -26,12 +33,6 @@ export async function POST(req) {
         { error: "Card Name is required" },
         { status: 400 }
       );
-    }
-
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
     }
 
     await connectMongo();
@@ -64,12 +65,19 @@ export async function POST(req) {
 
     return NextResponse.json({ message: "Card added successfully", board });
   } catch (error) {
+    console.error("Error adding card:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(req) {
   try {
+    const session = await getSessionInfo(req);
+
+    if (!session) {
+      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
+    }
+
     const body = await req.json();
 
     if (!body.boardId) {
@@ -91,12 +99,6 @@ export async function DELETE(req) {
         { error: "Card ID is required" },
         { status: 400 }
       );
-    }
-
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
     }
 
     await connectMongo();
