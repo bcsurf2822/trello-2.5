@@ -3,14 +3,11 @@
 import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import axiosInstance from "@/utils/axios";
 import { fetchBoards } from "@/utils/apiCalls";
 
-
 export default function DashBoard() {
-
   const queryClient = useQueryClient();
   const shouldFetch = true;
   const {
@@ -23,25 +20,8 @@ export default function DashBoard() {
     enabled: shouldFetch,
   });
 
-  const deleteBoardMutation = useMutation({
-    mutationKey: ["deleteBoard"],
-    mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["boards"], (oldBoards = []) =>
-        oldBoards.filter((board) => board._id !== variables)
-      );
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
-    },
-  });
-
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
-
-  const handleBoardDelete = (boardId) => {
-    deleteBoardMutation.mutate(boardId);
-  };
 
   const handleBoardCreate = (newBoard) => {
     queryClient.setQueryData(["boards"], (oldBoards = []) => [
@@ -49,8 +29,6 @@ export default function DashBoard() {
       newBoard,
     ]);
   };
-
-
 
   return (
     <div className="mt-16 mx-8">
@@ -80,10 +58,7 @@ export default function DashBoard() {
                   {board.name}
                 </Link>
 
-                <DeleteBoardButton
-                  onDelete={() => handleBoardDelete(board._id.toString())}
-                  boardId={board._id.toString()}
-                />
+                <DeleteBoardButton boardId={board._id.toString()} />
               </div>
             </div>
           ))}
