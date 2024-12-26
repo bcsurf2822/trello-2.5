@@ -1,30 +1,34 @@
-import { auth } from "@/auth";
-import User from "@/models/User";
+
+import { nanoid } from "nanoid";
 import { connectMongo } from "@/lib/mongoose";
+import User from "@/models/User";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
     await connectMongo();
 
-    // Count current guest users to generate a unique guest name
+    // Count existing guest users to assign unique names
     const guestCount = await User.countDocuments({ isGuest: true });
     const guestName = `guest${guestCount + 1}`;
 
-    // Create a new guest user
-    let guestUser = await User.findOne({ name: guestName });
-    if (!guestUser) {
-      guestUser = await User.create({
-        name: guestName,
-        isGuest: true,
-      });
-    }
+    // Create a guest user in the database
+    const guestUser = await User.create({
+      name: guestName,
+      isGuest: true,
+      email: `guest${nanoid()}@guest.com`,
+    });
 
-    await auth.signIn("guest", { id: guestUser._id });
 
-    return NextResponse.json({ message: "Guest login successful" });
+    const guestSession = {
+      id: guestUser._id,
+      name: guestUser.name,
+      isGuest: true,
+    };
+
+    return NextResponse.json(guestSession);
   } catch (error) {
-    console.error("Error during guest login:", error);
-    return NextResponse.json({ error: "Unable to login as guest" }, { status: 500 });
+    console.error("Error creating guest user:", error);
+    return NextResponse.json({ error: "Unable to create guest user" }, { status: 500 });
   }
 }
