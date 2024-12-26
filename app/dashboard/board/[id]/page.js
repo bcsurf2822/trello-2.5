@@ -2,7 +2,7 @@
 import AddList from "@/components/boardsUI/AddList";
 import List from "@/components/boardsUI/List";
 import { useBoard } from "@/hooks/useBoard";
-import axios from "axios";
+import { useSaveOrder } from "@/hooks/useSaveListOrder";
 import { Reorder } from "framer-motion";
 import { use, useEffect, useState } from "react";
 
@@ -11,6 +11,7 @@ export default function BoardPage({ params }) {
   const { id } = unwrappedParams;
   const { data: board, isLoading, error } = useBoard(id);
   const [lists, setLists] = useState(board?.lists || []);
+  const saveOrder = useSaveOrder(id);
 
   useEffect(() => {
     if (board?.lists) {
@@ -18,16 +19,10 @@ export default function BoardPage({ params }) {
     }
   }, [board]);
 
-  const saveOrder = async (newOrder) => {
+  const handleReorder = (newOrder) => {
     setLists(newOrder);
-    try {
-      await axios.put(`/api//list`, {
-        boardId: id,
-        lists: newOrder,
-      });
-    } catch (error) {
-      console.error("Error saving list order:", error);
-    }
+
+    saveOrder.mutate(newOrder);
   };
 
   if (isLoading) return <p>Loading...</p>;
@@ -42,7 +37,7 @@ export default function BoardPage({ params }) {
         <Reorder.Group
           axis="x"
           values={lists}
-          onReorder={saveOrder}
+          onReorder={handleReorder}
           className="flex gap-2"
         >
           {lists.map((list) => (

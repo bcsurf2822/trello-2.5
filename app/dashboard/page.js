@@ -8,7 +8,9 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import axiosInstance from "@/utils/axios";
 import { fetchBoards } from "@/utils/apiCalls";
 
+
 export default function DashBoard() {
+
   const queryClient = useQueryClient();
   const shouldFetch = true;
   const {
@@ -47,6 +49,8 @@ export default function DashBoard() {
       newBoard,
     ]);
   };
+
+
 
   return (
     <div className="mt-16 mx-8">
