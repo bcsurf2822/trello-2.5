@@ -1,25 +1,29 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/utils/axios";
+import axios from "axios";
 
 export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
-    onSuccess: (data, variables) => {
-
-      queryClient.setQueryData(["boards"], (oldBoards = []) =>
-        oldBoards.filter((board) => board._id !== variables)
-      );
+    mutationFn: async ({ boardId }) => {
+      try {
+        const response = await axios.delete("/api/boards", {
+          data: { boardId },
+        });
+        return response.data;
+      } catch (error) {
+        console.error("Error in API call:", error.response || error.message);
+        throw error;
+      }
     },
-    onSettled: () => {
-
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    onSuccess: () => {
+      console.log("Board deleted successfully");
+      queryClient.invalidateQueries(["boards"]);
     },
     onError: (error) => {
       console.error(
         "Error deleting board:",
-        error.response?.data || error.message
+        error.response?.data || error.message || error
       );
     },
   });

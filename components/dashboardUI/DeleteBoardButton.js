@@ -3,9 +3,10 @@ import { useDeleteBoard } from "@/hooks/useDeleteBoard";
 
 export default function DeleteBoardButton({ boardId }) {
   const deleteBoard = useDeleteBoard();
+  console.log("BoardID:", boardId)
 
   const handleDeleteBoard = () => {
-    deleteBoard.mutate(boardId);
+    deleteBoard.mutate({boardId});
   };
 
   return (

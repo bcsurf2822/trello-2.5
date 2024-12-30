@@ -3,9 +3,7 @@
 import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-// import { useQuery } from "@tanstack/react-query";
 
-// import { fetchBoards } from "@/utils/apiCalls";
 import { useFetchBoards } from "@/hooks/useFetchBoards";
 
 export default function DashBoard() {
@@ -13,6 +11,7 @@ export default function DashBoard() {
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
+  
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300 mb-2">
@@ -41,7 +40,7 @@ export default function DashBoard() {
                   {board.name}
                 </Link>
 
-                <DeleteBoardButton boardId={board._id.toString()} />
+                <DeleteBoardButton boardId={board._id} />
               </div>
             </div>
           ))}

@@ -1,20 +1,22 @@
 "use client";
+import { logoutGuest } from "@/utils/guestLogout";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const ButtonLogout = () => {
+const ButtonLogout = ({ authenticatedSession }) => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const guestSession = localStorage.getItem("user");
-
-    if (guestSession) {
-      localStorage.removeItem("user");
-    } else {
-      await signOut({ redirect: false });
+    try {
+      if (authenticatedSession?.isGuest) {
+        await logoutGuest();
+      } else {
+        await signOut({ redirect: false });
+      }
+      router.push("/");
+    } catch (error) {
+      console.error("Error during logout:", error);
     }
-
-    router.push("/");
   };
 
   return (

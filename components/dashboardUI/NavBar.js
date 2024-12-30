@@ -1,13 +1,13 @@
-import React from "react";
 import ButtonLogin from "../authenticationUI/ButtonLogin";
-import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
-import { getSessionInfo } from "@/utils/getSessionInfo";
-
+import { auth } from "@/auth";
 
 export default async function NavBar() {
-  const session = await getSessionInfo();
+
+  const authenticatedSession = await auth()
+
+
   return (
     <nav className="navbar bg-neutral-300 ">
       <div className="navbar-start">
@@ -52,8 +52,8 @@ export default async function NavBar() {
       </div>
       <div className="navbar-center hidden lg:flex"></div>
       <div className="navbar-end flex gap-3 ">
-        <ButtonLogin session={session} />
-        <ButtonLogout />
+        <ButtonLogin authenticatedSession={authenticatedSession} />
+        <ButtonLogout authenticatedSession={authenticatedSession} />
       </div>
     </nav>
   );

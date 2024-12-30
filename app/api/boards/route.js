@@ -76,6 +76,7 @@ export async function GET() {
   }
 }
 
+
 export async function DELETE(req) {
   try {
     const session = await getSessionInfo(req);
@@ -84,8 +85,7 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
     }
 
-    const { searchParams } = req.nextUrl;
-    const boardId = searchParams.get("boardId");
+    const { boardId } = await req.json();
 
     if (!boardId) {
       return NextResponse.json(
@@ -96,25 +96,26 @@ export async function DELETE(req) {
 
     await connectMongo();
 
-
-    const user = await User.findById(session.user.id);
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    await Board.deleteOne({
+    // Find and delete the board
+    const board = await Board.findOne({
       _id: boardId,
       userId: session.user.id,
     });
 
-    user.boards = user.boards.filter((id) => id.toString() !== boardId);
-    await user.save();
+    if (!board) {
+      return NextResponse.json({ error: "Board not found" }, { status: 404 });
+    }
 
-    return NextResponse.json(
-      { message: "Board deleted successfully" },
-      { status: 200 }
-    );
+    await Board.deleteOne({ _id: boardId, userId: session.user.id });
+
+    // Remove the board from the user's boards list
+    const user = await User.findById(session.user.id);
+    if (user) {
+      user.boards = user.boards.filter((id) => id.toString() !== boardId);
+      await user.save();
+    }
+
+    return NextResponse.json({ message: "Board deleted successfully" });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
