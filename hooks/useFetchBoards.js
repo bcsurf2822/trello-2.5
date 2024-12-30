@@ -8,7 +8,7 @@ export const useFetchBoards = () => {
       const response = await axios.get("/api/boards");
       return response.data;
     },
-    staleTime: 60 * 1000, // Optional: Define a stale time
-    cacheTime: 5 * 60 * 1000, // Optional: Define a cache time
+    staleTime: 60 * 1000, 
+    cacheTime: 5 * 60 * 1000, 
   });
 };

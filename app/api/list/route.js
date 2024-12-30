@@ -2,16 +2,11 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectMongo } from "@/lib/mongoose";
 import Board from "@/models/Board";
-import { getSessionInfo } from "@/utils/getSessionInfo";
+
+import User from "@/models/User";
 
 export async function POST(req) {
   try {
-    const session = await getSessionInfo(req);
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     const body = await req.json();
 
     if (!body.boardId || !body.name) {
@@ -23,9 +18,23 @@ export async function POST(req) {
 
     await connectMongo();
 
+    const session = await auth();
+
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else {
+      user = await User.findOne({ isGuest: true });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const board = await Board.findOne({
       _id: body.boardId,
-      userId: session.user.id,
+      userId: user.id,
     });
 
     if (!board) {
@@ -48,12 +57,6 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
-    const session = await getSessionInfo(req);
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     const { boardId, listId } = await req.json();
 
     if (!boardId || !listId) {
@@ -65,9 +68,23 @@ export async function DELETE(req) {
 
     await connectMongo();
 
+    const session = await auth();
+
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else {
+      user = await User.findOne({ isGuest: true });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const board = await Board.findOne({
       _id: boardId,
-      userId: session.user.id,
+      userId: user.id,
     });
 
     if (!board) {
@@ -93,12 +110,6 @@ export async function DELETE(req) {
 
 export async function PUT(req) {
   try {
-    const session = await getSessionInfo(req);
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     const body = await req.json();
 
     if (!body.boardId || !body.lists) {
@@ -110,9 +121,23 @@ export async function PUT(req) {
 
     await connectMongo();
 
+    const session = await auth();
+
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else {
+      user = await User.findOne({ isGuest: true });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const board = await Board.findOne({
       _id: body.boardId,
-      userId: session.user.id,
+      userId: user.id,
     });
 
     if (!board) {

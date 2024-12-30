@@ -4,17 +4,13 @@ import { auth } from "@/auth";
 import User from "@/models/User";
 import Board from "@/models/Board";
 import { connectMongo } from "@/lib/mongoose";
-import { getSessionInfo } from "@/utils/getSessionInfo";
+// import { getSessionInfo } from "@/utils/getSessionInfo";
 
 export async function POST(req) {
   try {
-    const session = await getSessionInfo(req);
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     const body = await req.json();
+
+
     if (!body.name) {
       return NextResponse.json(
         { error: "Board Name is Required" },
@@ -24,14 +20,21 @@ export async function POST(req) {
 
     await connectMongo();
 
+
+    const session = await auth();
+
     let user;
-    if (session.isGuest) {
-      user = session.user;
-    } else {
+
+    if (session) {
+      // Fetch the authenticated user
       user = await User.findById(session.user.id);
-      if (!user) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
-      }
+    } else {
+
+      user = await User.findOne({ isGuest: true });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const board = await Board.create({
@@ -39,37 +42,47 @@ export async function POST(req) {
       name: body.name,
     });
 
-    if (!session.isGuest) {
+    // Add board ID to the user's boards array only if they are not a guest
+    if (!user.isGuest) {
       user.boards.push(board._id);
       await user.save();
     }
 
-    return NextResponse.json(board);
+
+    return NextResponse.json(board, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function GET() {
+
+export async function GET(req) {
   try {
-    const session = await getSessionInfo();
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     await connectMongo();
 
-    if (session.isGuest) {
-      return NextResponse.json([]);
-    }
+    // Attempt to retrieve session for authenticated users
+    const session = await auth();
 
-    const user = await User.findById(session.user.id).populate("boards");
+    let user;
+
+    if (session) {
+      // Fetch the authenticated user
+      user = await User.findById(session.user.id).populate("boards");
+    } else {
+      // Handle guest user (this assumes you can identify the guest somehow)
+      user = await User.findOne({ isGuest: true }); // Add additional criteria if needed
+    }
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // If the user is a guest, return an empty array
+    if (user.isGuest) {
+      return NextResponse.json([]);
+    }
+
+    // For authenticated users, return their boards
     return NextResponse.json(user.boards);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -79,12 +92,6 @@ export async function GET() {
 
 export async function DELETE(req) {
   try {
-    const session = await getSessionInfo(req);
-
-    if (!session) {
-      return NextResponse.json({ error: "Not Authorized" }, { status: 401 });
-    }
-
     const { boardId } = await req.json();
 
     if (!boardId) {
@@ -96,21 +103,37 @@ export async function DELETE(req) {
 
     await connectMongo();
 
-    // Find and delete the board
+
+    const session = await auth();
+
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else {
+
+      user = await User.findOne({ isGuest: true });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+
     const board = await Board.findOne({
       _id: boardId,
-      userId: session.user.id,
+      userId: user.id,
     });
 
     if (!board) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-    await Board.deleteOne({ _id: boardId, userId: session.user.id });
 
-    // Remove the board from the user's boards list
-    const user = await User.findById(session.user.id);
-    if (user) {
+    await Board.deleteOne({ _id: boardId, userId: user.id });
+
+
+    if (!user.isGuest) {
       user.boards = user.boards.filter((id) => id.toString() !== boardId);
       await user.save();
     }
