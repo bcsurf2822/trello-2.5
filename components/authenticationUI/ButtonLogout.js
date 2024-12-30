@@ -1,11 +1,12 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { logoutGuest } from "@/utils/guestLogout";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const ButtonLogout = ({ authenticatedSession }) => {
+const ButtonLogout = () =>{
   const router = useRouter();
-
+const {authenticatedSession, isLoading} = useAuth()
   const handleLogout = async () => {
     try {
       if (authenticatedSession?.isGuest) {

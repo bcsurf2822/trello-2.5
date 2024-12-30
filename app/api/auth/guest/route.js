@@ -31,3 +31,37 @@ export async function POST() {
     );
   }
 }
+
+
+export async function DELETE(req) {
+  try {
+    await connectMongo();
+
+    // Fetch the guest user to delete
+    const guestUser = await User.findOne({ isGuest: true });
+
+    if (!guestUser) {
+      return NextResponse.json(
+        { error: "Guest user not found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete the guest user
+    await User.deleteOne({ _id: guestUser._id });
+
+    return NextResponse.json({
+      message: "Guest user deleted successfully",
+      guest: {
+        id: guestUser._id,
+        name: guestUser.name,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting guest user:", error);
+    return NextResponse.json(
+      { error: "Unable to delete guest user" },
+      { status: 500 }
+    );
+  }
+}

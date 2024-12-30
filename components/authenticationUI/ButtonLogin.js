@@ -1,14 +1,18 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { signIn } from "next-auth/react";
 
 
-const ButtonLogin = ({ authenticatedSession }) => {
+const ButtonLogin = () => {
   const dashURL = "/dashboard";
+
+  const {authenticatedSession} = useAuth()
+  console.log("SeshInfo", authenticatedSession)
 
 
 
   if (authenticatedSession) {
-    return <p className="text-md text-black font-semibold"> {authenticatedSession.user.name || "Guest"}</p>;
+    return <p className="text-md text-black font-semibold"> {authenticatedSession.name}</p>;
   }
 
   return (
