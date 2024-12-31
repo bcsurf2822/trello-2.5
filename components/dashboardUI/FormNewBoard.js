@@ -1,38 +1,33 @@
 "use client";
-
-import axios from "axios";
+import { useCreateBoard } from "@/hooks/useCreateBoard";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const FormNewBoard = ({ closeModal, onBoardCreate }) => {
+const FormNewBoard = ({ closeModal }) => {
   const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const createBoard = useCreateBoard();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (isLoading) return;
-    setIsLoading(true);
-    try {
-      const { data } = await axios.post("/api/boards", { name });
-      setName("");
-      toast.success("Board Successfully Created");
-      onBoardCreate(data);
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || error.message || "Something went wrong";
-      console.error(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-      closeModal();
-    }
+    if (createBoard.isLoading) return;
+
+    const boardData = { name };
+    createBoard.mutate(boardData, {
+      onSuccess: () => {
+        setName("");
+        toast.success("Board Successfully Created");
+        closeModal();
+      },
+      onError: () => {
+        toast.error("Failed to create board. Please try again.");
+      },
+    });
   };
 
   const handleClose = (e) => {
     e.preventDefault();
     closeModal();
   };
-
   return (
     <form className="bg-base-100 p-8 rounded-3xl space-y-8">
       {/* TITLE */}
@@ -65,7 +60,7 @@ const FormNewBoard = ({ closeModal, onBoardCreate }) => {
         type="submit"
         className="btn btn-primary btn-block"
       >
-        {isLoading && (
+        {createBoard.isLoading && (
           <span className="loading loading-spinner loading-xs"></span>
         )}
         Submit

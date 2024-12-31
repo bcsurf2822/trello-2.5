@@ -1,57 +1,48 @@
 "use client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useCreateList } from "@/hooks/useCreateList";
+
+import { useState } from "react";
 
 export default function AddList({ boardId }) {
-  const queryClient = useQueryClient();
+  const [listName, setListName] = useState("");
+  const createList = useCreateList(boardId);
 
-  const mutation = useMutation({
-    mutationFn: (formData) => {
-      return axios.post("/api/list", formData);
-    },
-    onSuccess: (data) => {
-      console.log("List added:", data.data);
-      queryClient.invalidateQueries(["lists", boardId]);
-    },
-    onError: (error) => {
-      console.error(
-        "Error adding list:",
-        error.response?.data || error.message
-      );
-    },
-  });
-
-  const onSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (listName.trim() === "") return;
 
     const formData = {
       boardId,
-      name: event.target.elements.listName.value.trim(),
+      name: listName.trim(),
     };
 
-    if (formData.name === "") return;
-
-    mutation.mutate(formData);
-    event.target.reset();
+    createList.mutate(formData, {
+      onSuccess: () => {
+        setListName("");
+      },
+    });
   };
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       className="w-[20vw] bg-neutral-100 py-2 rounded-lg flex-shrink-0 flex flex-col items-center justify-center gap-2 px-4"
     >
       <input
         type="text"
         name="listName"
+        value={listName}
+        onChange={(e) => setListName(e.target.value)}
         placeholder="List Name"
         className="input input-bordered input-sm w-full max-w-xs"
       />
       <button
         type="submit"
-        disabled={mutation.isLoading}
+        disabled={createList.isLoading}
         className="btn btn-primary w-1/2"
       >
-        {mutation.isLoading ? "Adding..." : "Add List"}
+        {createList.isLoading ? "Adding..." : "Add List"}
       </button>
     </form>
   );

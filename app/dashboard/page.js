@@ -3,55 +3,18 @@
 import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
-import axiosInstance from "@/utils/axios";
-import { fetchBoards } from "@/utils/apiCalls";
+import { useFetchBoards } from "@/hooks/useFetchBoards";
 
 export default function DashBoard() {
-  const queryClient = useQueryClient();
-  const shouldFetch = true;
-  const {
-    data: boards = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["boards"],
-    queryFn: () => fetchBoards(shouldFetch),
-    enabled: shouldFetch,
-  });
-
-  const deleteBoardMutation = useMutation({
-    mutationKey: ["deleteBoard"],
-    mutationFn: (boardId) => axiosInstance.delete(`/board/${boardId}`),
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["boards"], (oldBoards = []) =>
-        oldBoards.filter((board) => board._id !== variables)
-      );
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
-    },
-  });
-
+  const { data: boards = [], isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
-
-  const handleBoardDelete = (boardId) => {
-    deleteBoardMutation.mutate(boardId);
-  };
-
-  const handleBoardCreate = (newBoard) => {
-    queryClient.setQueryData(["boards"], (oldBoards = []) => [
-      ...oldBoards,
-      newBoard,
-    ]);
-  };
 
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300 mb-2">
-        <h1 className="text-2xl font-bold mb-2">Your Boards</h1>
+        <h1 className="text-2xl font-bold mb-2">Name&apos;s Boards</h1>
       </div>
       <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
         <div
@@ -76,20 +39,14 @@ export default function DashBoard() {
                   {board.name}
                 </Link>
 
-                <DeleteBoardButton
-                  onDelete={() => handleBoardDelete(board._id.toString())}
-                  boardId={board._id.toString()}
-                />
+                <DeleteBoardButton boardId={board._id} />
               </div>
             </div>
           ))}
 
         <dialog id="my_modal_1" className="modal">
           <div className="modal-box">
-            <FormNewBoard
-              onBoardCreate={handleBoardCreate}
-              closeModal={closeModal}
-            />
+            <FormNewBoard closeModal={closeModal} />
           </div>
         </dialog>
       </div>

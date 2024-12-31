@@ -1,32 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import AddCardButton from "./AddCardButton";
 import Cards from "./Cards";
+import { useDeleteList } from "@/hooks/useDeleteList";
 
 export default function List({ list, boardId }) {
   const listId = list._id;
-
-  const queryClient = useQueryClient();
-
-  const deleteMutation = useMutation({
-    mutationFn: ({ boardId, listId }) => {
-      return axios.delete("/api/list", { data: { boardId, listId } });
-    },
-    onSuccess: () => {
-      console.log("List deleted successfully");
-
-      queryClient.invalidateQueries(["board", list.boardId]);
-    },
-    onError: (error) => {
-      console.error(
-        "Error deleting list:",
-        error.response?.data || error.message
-      );
-    },
-  });
-
+  const deleteList = useDeleteList(boardId);
+  
   const handleDeleteList = () => {
-    deleteMutation.mutate({ boardId: boardId, listId: listId });
+    deleteList.mutate({ listId });
   };
 
   return (

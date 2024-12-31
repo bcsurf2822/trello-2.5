@@ -10,7 +10,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="light">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}</Providers>
       </body>
     </html>
   );

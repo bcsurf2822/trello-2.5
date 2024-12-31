@@ -1,29 +1,19 @@
 "use client";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useDeleteBoard } from "@/hooks/useDeleteBoard";
 
-export default function DeleteBoardButton({ onDelete, boardId }) {
+export default function DeleteBoardButton({ boardId }) {
+  const deleteBoard = useDeleteBoard();
+  console.log("BoardID:", boardId)
 
-
-  const handleDeleteBoard = async (event) => {
-    event.stopPropagation();
-    try {
-      const isSure = window.confirm("Are you sure you want to delete?");
-      if (isSure) {
-        await axios.delete(`/api/boards?boardId=${boardId}`);
-        onDelete(boardId);
-        toast.success("Board Deleted!");
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.error || error.message || "Something Went Wrong";
-      toast.error(errorMessage);
-      console.error("Error:", errorMessage);
-    }
+  const handleDeleteBoard = () => {
+    deleteBoard.mutate({boardId});
   };
 
   return (
-    <button className="btn btn-ghost hover:bg-red-500 hover:text-white mr-2" onClick={handleDeleteBoard}>
+    <button
+      className="btn btn-ghost hover:bg-red-500 hover:text-white mr-2"
+      onClick={handleDeleteBoard}
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"

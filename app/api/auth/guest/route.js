@@ -1,30 +1,67 @@
-import { auth } from "@/auth";
-import User from "@/models/User";
 import { connectMongo } from "@/lib/mongoose";
+import User from "@/models/User";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST() {
   try {
     await connectMongo();
 
-    // Count current guest users to generate a unique guest name
     const guestCount = await User.countDocuments({ isGuest: true });
     const guestName = `guest${guestCount + 1}`;
 
-    // Create a new guest user
-    let guestUser = await User.findOne({ name: guestName });
-    if (!guestUser) {
-      guestUser = await User.create({
-        name: guestName,
+    const guestUser = await User.create({
+      name: guestName,
+      isGuest: true,
+      email: `${guestName}@guest.com`,
+    });
+
+    return NextResponse.json({
+      message: "Guest user created successfully",
+      guest: {
+        id: guestUser._id,
+        name: guestUser.name,
         isGuest: true,
-      });
+      },
+    });
+  } catch (error) {
+    console.error("Error creating guest user:", error);
+    return NextResponse.json(
+      { error: "Unable to create guest user" },
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function DELETE(req) {
+  try {
+    await connectMongo();
+
+    // Fetch the guest user to delete
+    const guestUser = await User.findOne({ isGuest: true });
+
+    if (!guestUser) {
+      return NextResponse.json(
+        { error: "Guest user not found" },
+        { status: 404 }
+      );
     }
 
-    await auth.signIn("guest", { id: guestUser._id });
+    // Delete the guest user
+    await User.deleteOne({ _id: guestUser._id });
 
-    return NextResponse.json({ message: "Guest login successful" });
+    return NextResponse.json({
+      message: "Guest user deleted successfully",
+      guest: {
+        id: guestUser._id,
+        name: guestUser.name,
+      },
+    });
   } catch (error) {
-    console.error("Error during guest login:", error);
-    return NextResponse.json({ error: "Unable to login as guest" }, { status: 500 });
+    console.error("Error deleting guest user:", error);
+    return NextResponse.json(
+      { error: "Unable to delete guest user" },
+      { status: 500 }
+    );
   }
 }

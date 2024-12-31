@@ -1,21 +1,29 @@
-import connectToDatabase from "../../../lib/mongoose";
-import User from "../../../models/User";
+import { NextResponse } from "next/server";
+import { connectMongo } from "@/lib/mongoose";
+import User from "@/models/User";
+import { auth } from "@/auth";
 
-
-export async function POST(request) {
+export async function GET() {
   try {
-    await connectToDatabase();
+    await connectMongo();
 
-    const data = await request.json();
-    const newUser = await User.create(data);
+    const session = await auth();
 
-    return new Response(JSON.stringify(newUser), {
-      headers: { "Content-Type": "application/json" },
-    });
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else {
+      user = await User.findOne({ isGuest: true }).sort({ createdAt: -1 });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ user }, { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Error fetching user info:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

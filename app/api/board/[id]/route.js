@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 
 import Board from "@/models/Board";
