@@ -19,7 +19,7 @@ export default function DashBoard() {
   if (loading) {
     return <p>Loading session...</p>;
   }
-  
+  console.log("Auth Session From Dash", authenticatedSession)
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300 mb-2">
