@@ -1,17 +1,10 @@
-
 import ButtonLogin from "../authenticationUI/ButtonLogin";
+import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
-import { auth } from "@/auth";
-import { useAuth } from "@/context/AuthContext";
 
 export default async function NavBar() {
-
-
-
-
-
-
+  const session = await auth();
 
   return (
     <nav className="navbar bg-neutral-300 ">
@@ -57,8 +50,8 @@ export default async function NavBar() {
       </div>
       <div className="navbar-center hidden lg:flex"></div>
       <div className="navbar-end flex gap-3 ">
-        <ButtonLogin  />
-        <ButtonLogout  />
+        <ButtonLogin session={session} />
+        <ButtonLogout />
       </div>
     </nav>
   );

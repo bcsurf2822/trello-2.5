@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectMongo } from "@/lib/mongoose";
 import User from "@/models/User";
-import { auth } from "@/auth"; // Your existing NextAuth session function
+import { auth } from "@/auth";
 
 export async function GET() {
   try {

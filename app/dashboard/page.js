@@ -5,25 +5,16 @@ import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
 
 import { useFetchBoards } from "@/hooks/useFetchBoards";
-import { useAuth } from "@/context/AuthContext";
-import { redirect } from "next/navigation";
 
 export default function DashBoard() {
-  const { authenticatedSession, loading } = useAuth();
-
-
   const { data: boards = [], isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
-  if (loading) {
-    return <p>Loading session...</p>;
-  }
-  console.log("Auth Session From Dash", authenticatedSession)
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300 mb-2">
-        <h1 className="text-2xl font-bold mb-2">Your Boards</h1>
+        <h1 className="text-2xl font-bold mb-2">Name&apos;s Boards</h1>
       </div>
       <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
         <div
