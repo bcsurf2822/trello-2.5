@@ -5,7 +5,7 @@ const baseURL = process.env.API_BASE_URL || "http://localhost:3000";
 export const loginAsGuest = async () => {
   try {
     console.log("Logging in as guest helper function starting");
-    // good to here
+
     const { data } = await axios.post("/api/auth/guest");
 
     console.log("Guest session created:", data.guest);
