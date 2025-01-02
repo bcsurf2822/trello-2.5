@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
   boards: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      // use to tell mongoose that elements inside of boards array will ref to other MOdels
       ref: "Board",
     },
   ],
