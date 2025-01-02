@@ -2,9 +2,14 @@ import ButtonLogin from "../authenticationUI/ButtonLogin";
 import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
+import { fetchUserInfo } from "@/utils/userInfo";
+
 
 export default async function NavBar() {
   const session = await auth();
+  console.log("Session", session)
+  const guestUser = await fetchUserInfo();
+  console.log("Guest Info:", guestUser);
 
   return (
     <nav className="navbar bg-neutral-300 ">
@@ -50,7 +55,11 @@ export default async function NavBar() {
       </div>
       <div className="navbar-center hidden lg:flex"></div>
       <div className="navbar-end flex gap-3 ">
-        <ButtonLogin session={session} />
+      {guestUser ? (
+          <div className="text-sm font-semibold flex justify-center gap-1">Logged In As:  <span className="font-bold"> {guestUser.name}</span></div>
+        ) : (
+          <ButtonLogin session={session} />
+        )}
         <ButtonLogout />
       </div>
     </nav>
