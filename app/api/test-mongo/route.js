@@ -1,14 +1,16 @@
-import clientPromise from "@/lib/mongo";
+import { NextResponse } from "next/server";
+import { connectMongo } from "@/lib/mongoose";
 
-export default async function handler(req, res) {
+export async function GET() {
   try {
 
-    const client = await clientPromise;
-    const db = client.db(); 
-    const collections = await db.listCollections().toArray();
-    res.status(200).json({ message: "Connection successful", collections });
+    await connectMongo();
+    console.log("MongoDB connection successful");
+
+    return NextResponse.json({ message: "MongoDB connection successful" }, { status: 200 });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error.message);
-    res.status(500).json({ message: "Connection failed", error: error.message });
+
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
