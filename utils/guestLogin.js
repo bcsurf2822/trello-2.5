@@ -2,6 +2,7 @@ import axios from "axios";
 
 export const loginAsGuest = async () => {
   try {
+    console.log("Logging in as guest helper function starting")
     const { data } = await axios.post("/api/auth/guest");
 
     console.log("Guest session created:", data.guest);
