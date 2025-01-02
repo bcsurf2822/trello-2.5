@@ -14,7 +14,7 @@ export default function DashBoard() {
   return (
     <div className="mt-16 mx-8">
       <div className="border-b-2 border-slate-300 mb-2">
-        <h1 className="text-2xl font-bold mb-2">Name&apos;s Boards</h1>
+        <h1 className="text-2xl font-bold mb-2">Boards</h1>
       </div>
       <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
         <div

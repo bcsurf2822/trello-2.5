@@ -8,14 +8,13 @@ const ButtonLogout = ({ guestUser }) => {
   const handleLogout = async () => {
     if (guestUser) {
       try {
-        await logoutGuest(guestUser._id); 
+        await logoutGuest(guestUser._id);
         console.log("Guest user logged out successfully");
         router.push("/");
       } catch (error) {
         console.error("Failed to log out guest user:", error);
       }
     } else {
-     
       signOut({ callbackUrl: "/" });
     }
   };
