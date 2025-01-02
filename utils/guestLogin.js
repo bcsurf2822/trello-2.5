@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const baseURL = process.env.API_BASE_URL || "http://localhost:3000";
+
 
 export const loginAsGuest = async () => {
   try {
-    console.log("Logging in as guest helper function starting");
+
 
     const { data } = await axios.post("/api/auth/guest");
 
