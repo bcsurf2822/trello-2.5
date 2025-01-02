@@ -60,7 +60,7 @@ export default async function NavBar() {
         ) : (
           <ButtonLogin session={session} />
         )}
-        <ButtonLogout />
+        <ButtonLogout guestUser={guestUser} />
       </div>
     </nav>
   );
