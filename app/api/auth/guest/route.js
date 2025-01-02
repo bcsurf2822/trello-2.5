@@ -2,46 +2,18 @@ import { connectMongo } from "@/lib/mongoose";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
-export async function POST(req) {
+export async function POST() {
   try {
     console.log("Starting POST request for guest login...");
-
+    
     await connectMongo();
     console.log("MongoDB connection successful.");
 
-    const cookieStore = req.cookies;
-    console.log("CookieStore", cookieStore);
-    const guestId = cookieStore.get("guestId")?.value;
-
-    console.log("GuestID", guestId);
-
-    let guestUser;
-
-    if (guestId) {
-      console.log("Guest ID found in cookies:", guestId);
-
- 
-      guestUser = await User.findById(guestId);
-
-      if (guestUser) {
-        console.log("Returning existing guest user:", guestUser);
-        return NextResponse.json({
-          message: "Returning existing guest user",
-          guest: {
-            id: guestUser._id,
-            name: guestUser.name,
-            isGuest: true,
-          },
-        });
-      }
-    }
-
-    // If no valid guestId or user, create a new guest user
-    console.log("Creating a new guest user...");
+    // Create a new guest user
     const guestCount = await User.countDocuments({ isGuest: true });
     const guestName = `guest${guestCount + 1}`;
 
-    guestUser = await User.create({
+    const guestUser = await User.create({
       name: guestName,
       isGuest: true,
       email: `${guestName}@guest.com`,
@@ -61,7 +33,9 @@ export async function POST(req) {
 
     response.cookies.set("guestId", guestUser._id.toString(), {
       httpOnly: true,
-      maxAge: 60 * 60 * 24,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24, // 1 day
     });
 
     console.log("Guest ID set in cookies:", guestUser._id.toString());
@@ -75,6 +49,7 @@ export async function POST(req) {
     );
   }
 }
+
 
 export async function DELETE(req) {
   try {
