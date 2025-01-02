@@ -5,7 +5,9 @@ const localUrl = process.env.NEXT_PUBLIC_API_BASE_URL
 export const fetchUserInfo = async () => {
   try {
     console.log("To response")
-    const response = await axios.get(`${localUrl}/api/user`); 
+    const response = await axios.get(`${localUrl}/api/user`, {
+      withCredentials: true, // Include cookies in the request
+    });
     console.log("Res", response);
     return response.data.user;
   } catch (error) {

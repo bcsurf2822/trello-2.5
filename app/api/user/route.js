@@ -1,19 +1,23 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers"; // For accessing cookies
+import { cookies } from "next/headers";
 import { connectMongo } from "@/lib/mongoose";
 import User from "@/models/User";
 
-export async function GET() {
+export async function GET(request) {
   try {
     console.log("Fetching guest user...");
-    
-    // Connect to MongoDB
+
+    // Log the incoming request headers
+    console.log("Request Headers:", request.headers);
+
     await connectMongo();
     console.log("MongoDB connection successful.");
 
-    // Access cookies to get guestId
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
+    console.log("CookieStore-----------------------------------", cookieStore);
+
     const guestId = cookieStore.get("guestId")?.value;
+    console.log("Extracted guestId:", guestId);
 
     if (!guestId) {
       console.log("No guest ID found in cookies.");
@@ -25,7 +29,6 @@ export async function GET() {
 
     console.log("Guest ID found in cookies:", guestId);
 
-    // Find the guest user by ID
     const user = await User.findById(guestId);
 
     if (!user || !user.isGuest) {
@@ -37,8 +40,6 @@ export async function GET() {
     }
 
     console.log("Returning guest user:", user);
-
-    // Return the found guest user
     return NextResponse.json({ user });
   } catch (error) {
     console.error("Error fetching guest user:", error.message);
