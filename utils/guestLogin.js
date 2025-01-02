@@ -1,10 +1,8 @@
 import axios from "axios";
 
-
-
 export const loginAsGuest = async () => {
   try {
-
+    console.log("Attempting to log in as a guest...");
 
     const { data } = await axios.post("/api/auth/guest");
 
