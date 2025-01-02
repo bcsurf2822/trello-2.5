@@ -9,6 +9,7 @@ export default function ButtonGuestLogin() {
 
   const handleGuestLogin = async () => {
     try {
+      console.log("Guest Button Pressed")
       const guestSession = await loginAsGuest();
       console.log("Logged in as guest:", guestSession);
 
