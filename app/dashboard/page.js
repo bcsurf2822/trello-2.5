@@ -25,7 +25,7 @@ export default function DashBoard() {
         </div>
 
         {isLoading && <span className="loading loading-bars loading-md"></span>}
-        {isError && <p>Error loading boards. Please try again.</p>}
+        {isError && <p>Error loading boards..</p>}
 
         {!isLoading &&
           !isError &&
