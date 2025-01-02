@@ -2,9 +2,11 @@ import ButtonLogin from "../authenticationUI/ButtonLogin";
 import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
+import { fetchUserInfo } from "@/utils/userInfo";
 
 export default async function NavBar() {
   const session = await auth();
+  const guestUser = session ? null : await fetchUserInfo();
 
   return (
     <nav className="navbar bg-neutral-300 ">
@@ -27,9 +29,10 @@ export default async function NavBar() {
             </svg>
           </div>
         </div>
+
         <Link
           href={"/dashboard"}
-          className="btn btn-ghost text-2xl text-primary font-bold"
+          className="text-3xl text-blue-700 font-extrabold flex gap-2 items-center"
         >
           Trello 2.5{" "}
           <svg
@@ -38,7 +41,7 @@ export default async function NavBar() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className="size-6 text-black"
           >
             <path
               strokeLinecap="round"
@@ -50,8 +53,14 @@ export default async function NavBar() {
       </div>
       <div className="navbar-center hidden lg:flex"></div>
       <div className="navbar-end flex gap-3 ">
-        <ButtonLogin session={session} />
-        <ButtonLogout />
+        {guestUser ? (
+          <div className="text-sm font-semibold flex justify-center gap-1">
+            Logged In As: <span className="font-bold"> {guestUser.name}</span>
+          </div>
+        ) : (
+          <ButtonLogin session={session} />
+        )}
+        <ButtonLogout guestUser={guestUser} />
       </div>
     </nav>
   );

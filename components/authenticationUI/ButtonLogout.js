@@ -1,10 +1,22 @@
 "use client";
+import { logoutGuest } from "@/utils/guestLogout";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-
-const ButtonLogout = () => {
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/' }); // Redirects the user to "/" after signing out
+const ButtonLogout = ({ guestUser }) => {
+  const router = useRouter();
+  const handleLogout = async () => {
+    if (guestUser) {
+      try {
+        await logoutGuest(guestUser._id);
+        console.log("Guest user logged out successfully");
+        router.push("/");
+      } catch (error) {
+        console.error("Failed to log out guest user:", error);
+      }
+    } else {
+      signOut({ callbackUrl: "/" });
+    }
   };
 
   return (
