@@ -8,17 +8,11 @@ import { cookies } from "next/headers";
 export default async function NavBar() {
   const session = await auth();
   const cookieStore = await cookies();
-  console.log("cookies", cookieStore);
-
   const guestId = cookieStore.get("guestId")?.value;
-  console.log("GuestID:", guestId);
-
   let guestUser = null;
   if (!session && guestId) {
     guestUser = await fetchUserInfo(guestId);
   }
-
-  console.log("Guest User Info:", guestUser);
 
   return (
     <nav className="navbar bg-neutral-300 ">

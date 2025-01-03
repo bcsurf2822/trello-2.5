@@ -8,7 +8,6 @@ export async function GET(request) {
     const guestId = searchParams.get("guestId");
 
     if (!guestId) {
-      console.log("No guest ID found in query.");
       return NextResponse.json(
         { error: "No guest session found" },
         { status: 401 }
