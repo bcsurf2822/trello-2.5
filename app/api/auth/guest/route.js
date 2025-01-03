@@ -60,33 +60,49 @@ export async function DELETE(req) {
     if (!guestId) {
       return NextResponse.json(
         { error: "Guest ID is required" },
-        { status: 400 }
+        { status: 400 } // Bad Request
       );
     }
 
+    // Find the guest user by guestId
     const guestUser = await User.findById(guestId);
 
     if (!guestUser || !guestUser.isGuest) {
       return NextResponse.json(
         { error: "Guest user not found or invalid" },
-        { status: 404 }
+        { status: 404 } // Not Found
       );
     }
 
+    // Delete the guest user
     await User.deleteOne({ _id: guestId });
 
-    return NextResponse.json({
+    // Create a response to clear the guestId cookie
+    const response = NextResponse.json({
       message: "Guest user deleted successfully",
       guest: {
         id: guestUser._id,
         name: guestUser.name,
       },
     });
+
+    // Clear the guestId cookie
+    response.cookies.set("guestId", "", {
+      maxAge: 0,
+      path: "/", 
+      secure: process.env.NODE_ENV === "production", // Only set secure cookies in production
+      sameSite: "Strict", // Prevent cross-site requests from accessing the cookie
+    });
+
+    // Prevent caching of the response
+    response.headers.set("Cache-Control", "no-store");
+
+    return response;
   } catch (error) {
     console.error("Error deleting guest user:", error);
     return NextResponse.json(
       { error: "Unable to delete guest user" },
-      { status: 500 }
+      { status: 500 } // Internal Server Error
     );
   }
 }
