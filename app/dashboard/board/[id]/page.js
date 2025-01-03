@@ -33,7 +33,6 @@ export default function BoardPage({ params }) {
       <h1 className="text-3xl font-bold ml-2 my-2 underline">{board?.name}</h1>
       <br className="mx-2 mb-1" />
       <section className="flex gap-4 mx-2">
-
         <Reorder.Group
           axis="x"
           values={lists}

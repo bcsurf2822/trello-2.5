@@ -9,7 +9,6 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
-
     if (!body.boardId) {
       return NextResponse.json(
         { error: "Board ID is required" },
@@ -40,8 +39,7 @@ export async function POST(req) {
     if (session) {
       user = await User.findById(session.user.id);
     } else {
-
-      user = await User.findOne({ isGuest: true }); 
+      user = await User.findOne({ isGuest: true });
     }
 
     if (!user) {
@@ -57,7 +55,6 @@ export async function POST(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-
     const list = board.lists.find(
       (list) => list._id.toString() === body.listId
     );
@@ -65,7 +62,6 @@ export async function POST(req) {
     if (!list) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });
     }
-
 
     const newCard = {
       name: body.name,
@@ -83,11 +79,9 @@ export async function POST(req) {
   }
 }
 
-
 export async function DELETE(req) {
   try {
     const body = await req.json();
-
 
     if (!body.boardId) {
       return NextResponse.json(
@@ -117,11 +111,9 @@ export async function DELETE(req) {
     let user;
 
     if (session) {
-
       user = await User.findById(session.user.id);
     } else {
-
-      user = await User.findOne({ isGuest: true }); 
+      user = await User.findOne({ isGuest: true });
     }
 
     if (!user) {
@@ -137,7 +129,6 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-
     const list = board.lists.find(
       (list) => list._id.toString() === body.listId
     );
@@ -145,7 +136,6 @@ export async function DELETE(req) {
     if (!list) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });
     }
-
 
     const cardIndex = list.cards.findIndex(
       (card) => card._id.toString() === body.cardId

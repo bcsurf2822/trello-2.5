@@ -5,7 +5,7 @@ import { useDeleteList } from "@/hooks/useDeleteList";
 export default function List({ list, boardId }) {
   const listId = list._id;
   const deleteList = useDeleteList(boardId);
-  
+
   const handleDeleteList = () => {
     deleteList.mutate({ listId });
   };

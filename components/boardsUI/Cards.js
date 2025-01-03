@@ -1,9 +1,7 @@
 import { useDeleteCard } from "@/hooks/useDeleteCard";
 
-
-export default function Cards({card, listId, boardId} ) {
-
-  console.log("Card", card)
+export default function Cards({ card, listId, boardId }) {
+  console.log("Card", card);
 
   const deleteCardMutation = useDeleteCard(boardId, listId);
 
@@ -11,11 +9,13 @@ export default function Cards({card, listId, boardId} ) {
     deleteCardMutation.mutate(card._id);
   };
 
-
   return (
-<li className="bg-neutral-300 text-black w-full text-start py-2 hover:bg-slate-400 pl-2 flex justify-between items-center">
+    <li className="bg-neutral-300 text-black w-full text-start py-2 hover:bg-slate-400 pl-2 flex justify-between items-center">
       <span>{card.name}</span>
-      <button onClick={handleDeleteCard} disabled={deleteCardMutation.isLoading}>
+      <button
+        onClick={handleDeleteCard}
+        disabled={deleteCardMutation.isLoading}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
