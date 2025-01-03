@@ -13,6 +13,7 @@ export default async function NavBar() {
   if (!session && guestId) {
     guestUser = await fetchUserInfo(guestId);
   }
+  console.log("Guest User", guestUser)
 
   return (
     <nav className="navbar bg-neutral-300 ">
