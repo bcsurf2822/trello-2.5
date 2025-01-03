@@ -1,30 +1,23 @@
-'use client'
-import { useState } from "react";
-import { logoutGuest } from "@/utils/guestLogout";
+"use client";
+import { useLogoutGuest } from "@/hooks/useLogoutGuest";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const ButtonLogout = ({ guestUser }) => {
-  const [isLoading, setIsLoading] = useState(false); 
+const ButtonLogout = ({ guestId }) => {
+  const logoutGuest = useLogoutGuest();
   const router = useRouter();
 
-  const handleLogout = async () => {
-    console.log("Initiating logout process...");
-    if (guestUser) {
-      setIsLoading(true);
-      try {
-        console.log("Logging out guest user:", guestUser);
-        await logoutGuest(guestUser._id);
-        console.log("Successfully logged out guest user:", guestUser);
-
-        router.push("/");
-      } catch (error) {
-        console.error("Failed to log out guest user:", error);
-      } finally {
-        setIsLoading(false); 
-      }
+  const handleLogout = () => {
+    if (guestId) {
+      logoutGuest.mutate(
+        { guestId }, 
+        {
+          onSuccess: () => {
+            router.push("/");
+          },
+        }
+      );
     } else {
-      console.log("No guest user found. Logging out authenticated user.");
       signOut({ callbackUrl: "/" });
     }
   };
@@ -32,10 +25,10 @@ const ButtonLogout = ({ guestUser }) => {
   return (
     <button
       onClick={handleLogout}
-      className={`btn btn-error font-bold ${isLoading ? "loading" : ""}`}
-      disabled={isLoading} // Disable button while loading
+      className={`btn btn-error font-bold ${logoutGuest.isLoading ? "loading" : ""}`}
+      disabled={logoutGuest.isLoading}
     >
-      {isLoading ? "Logging out..." : "Logout"}
+      {logoutGuest.isLoading ? "Logging out..." : "Logout"}
     </button>
   );
 };
