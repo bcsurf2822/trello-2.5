@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST() {
   try {
     console.log("Starting POST request for guest login...");
-    
+
     await connectMongo();
     console.log("MongoDB connection successful.");
 
@@ -50,21 +50,30 @@ export async function POST() {
   }
 }
 
-
 export async function DELETE(req) {
   try {
     await connectMongo();
 
-    const guestUser = await User.findOne({ isGuest: true });
+    const body = await req.json();
+    const { guestId } = body;
 
-    if (!guestUser) {
+    if (!guestId) {
       return NextResponse.json(
-        { error: "Guest user not found" },
+        { error: "Guest ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const guestUser = await User.findById(guestId);
+
+    if (!guestUser || !guestUser.isGuest) {
+      return NextResponse.json(
+        { error: "Guest user not found or invalid" },
         { status: 404 }
       );
     }
 
-    await User.deleteOne({ _id: guestUser._id });
+    await User.deleteOne({ _id: guestId });
 
     return NextResponse.json({
       message: "Guest user deleted successfully",

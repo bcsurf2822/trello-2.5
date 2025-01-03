@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const localUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const localUrl = process.env.API_BASE_URL;
 
 export const fetchUserInfo = async (guestId) => {
   try {
