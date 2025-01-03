@@ -7,7 +7,6 @@ export const useGuestLogin = () => {
   return useMutation({
     mutationFn: async () => {
       try {
-        console.log("Attempting to log in as a guest...");
         const { data } = await axios.post("/api/auth/guest");
         console.log("Guest session created:", data.guest);
         return data.guest;
