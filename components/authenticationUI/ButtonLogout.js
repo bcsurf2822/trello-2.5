@@ -7,6 +7,8 @@ const ButtonLogout = ({ guestId }) => {
   const logoutGuest = useLogoutGuest();
   const router = useRouter();
 
+  console.log("GuestID", guestId)
+
   const handleLogout = () => {
     if (guestId) {
       logoutGuest.mutate(
