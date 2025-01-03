@@ -3,10 +3,16 @@ import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
 import { fetchUserInfo } from "@/utils/userInfo";
+import { cookies } from "next/headers";
 
 export default async function NavBar() {
   const session = await auth();
-  const guestUser = session ? null : await fetchUserInfo();
+  const cookieStore = await cookies();
+  const guestId = cookieStore.get("guestId")?.value;
+  let guestUser = null;
+  if (!session && guestId) {
+    guestUser = await fetchUserInfo(guestId);
+  }
 
   return (
     <nav className="navbar bg-neutral-300 ">

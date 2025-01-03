@@ -1,11 +1,14 @@
 import axios from "axios";
 
-export const fetchUserInfo = async () => {
+const localUrl = process.env.API_BASE_URL;
+
+export const fetchUserInfo = async (guestId) => {
   try {
-    const baseURL = process.env.API_BASE_URL || "http://localhost:3000";
-    const response = await axios.get(`${baseURL}/api/user`);
-    console.log("Res", response);
-    return response.data.user; 
+    const response = await axios.get(`${localUrl}/api/user`, {
+      params: { guestId },
+      withCredentials: true,
+    });
+    return response.data.user;
   } catch (error) {
     console.error(
       "Error fetching user info:",
