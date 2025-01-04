@@ -1,9 +1,9 @@
+import Login from "@/components/homeUI/Login";
 
-
-export default function Home() {
+export default async function Home() {
   return (
-    <div>
-
-    </div>
+    <main>
+      <Login />
+    </main>
   );
 }
