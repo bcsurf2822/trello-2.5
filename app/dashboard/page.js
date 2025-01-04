@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useFetchBoards } from "@/hooks/useFetchBoards";
 
 export default function DashBoard() {
-  const { data: boards = [], isLoading, isError } = useFetchBoards();
+  const { data, isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
@@ -29,7 +29,7 @@ export default function DashBoard() {
 
         {!isLoading &&
           !isError &&
-          boards.map((board) => (
+          data.map((board) => (
             <div key={board._id} className="group">
               <div className="bg-gray-100 hover:bg-gray-200 rounded-lg h-28 flex items-center justify-between">
                 <Link

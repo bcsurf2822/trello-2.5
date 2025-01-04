@@ -14,7 +14,6 @@ export default async function NavBar() {
     guestUser = await fetchGuestInfo(guestId);
   }
 
-
   return (
     <nav className="navbar bg-neutral-300 ">
       <div className="navbar-start">

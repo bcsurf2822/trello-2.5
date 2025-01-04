@@ -9,7 +9,7 @@ export async function POST() {
     await connectMongo();
     console.log("MongoDB connection successful.");
 
-    // Create a new guest user
+   
     const guestCount = await User.countDocuments({ isGuest: true });
     const guestName = `guest${guestCount + 1}`;
 
@@ -21,7 +21,7 @@ export async function POST() {
 
     console.log("New guest user created:", guestUser);
 
-    // Set guestId in the response cookie
+
     const response = NextResponse.json({
       message: "Guest user created successfully",
       guest: {
@@ -35,7 +35,7 @@ export async function POST() {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 60 * 24, 
     });
 
     console.log("Guest ID set in cookies:", guestUser._id.toString());

@@ -25,7 +25,7 @@ export default function BoardPage({ params }) {
     saveOrder.mutate(newOrder);
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <span className="loading loading-dots loading-lg"></span>;
   if (error) return <p>Error loading board: {error.message}</p>;
 
   return (

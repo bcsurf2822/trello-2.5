@@ -7,9 +7,9 @@ export const useCreateBoard = () => {
   return useMutation({
     mutationFn: (boardData) => axios.post("/api/boards", boardData),
     onSuccess: (data) => {
-      console.log("Board created successfully:", data.data);
 
-      queryClient.setQueryData(["boards"], (oldBoards = []) => [
+
+      queryClient.setQueryData(["boards"], (oldBoards) => [
         ...oldBoards,
         data.data,
       ]);
