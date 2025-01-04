@@ -2,7 +2,7 @@ import ButtonLogin from "../authenticationUI/ButtonLogin";
 import { auth } from "@/auth";
 import Link from "next/link";
 import ButtonLogout from "../authenticationUI/ButtonLogout";
-import { fetchUserInfo } from "@/utils/userInfo";
+import { fetchGuestInfo } from "@/utils/fetchGuestInfo";
 import { cookies } from "next/headers";
 
 export default async function NavBar() {
@@ -11,8 +11,10 @@ export default async function NavBar() {
   const guestId = cookieStore.get("guestId")?.value;
   let guestUser = null;
   if (!session && guestId) {
-    guestUser = await fetchUserInfo(guestId);
+    guestUser = await fetchGuestInfo(guestId);
   }
+
+  console.log("Guest User in Nav", guestUser)
 
 
   return (
@@ -67,7 +69,7 @@ export default async function NavBar() {
         ) : (
           <ButtonLogin session={session} />
         )}
-        <ButtonLogout guestId={guestUser?._id} />
+        <ButtonLogout guestUser={guestUser} />
       </div>
     </nav>
   );
