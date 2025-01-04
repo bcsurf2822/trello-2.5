@@ -1,18 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLogoutGuest } from "@/hooks/useLogoutGuest";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const ButtonLogout = ({ guestUser }) => {
-  const [guest, setGuest] = useState(guestUser || null); // Manage guest state locally
+  const [guest, setGuest] = useState(guestUser || null);
   const logoutGuest = useLogoutGuest();
   const router = useRouter();
 
-  // Log guest state whenever it changes
-  useEffect(() => {
-    console.log("Guest state updated:", guest);
-  }, [guest]);
+
 
   const handleLogout = () => {
     if (guest?._id) {
@@ -23,14 +20,13 @@ const ButtonLogout = ({ guestUser }) => {
             console.log(
               "Guest successfully logged out. Resetting guest to null..."
             );
-            setGuest(null); // Reset guest to null after successful logout
+            setGuest(null); 
             router.push("/");
             router.refresh()
           },
         }
       );
     } else {
-      console.log("No guestId found, signing out user session.");
       signOut({ callbackUrl: "/" });
     }
   };
