@@ -1,6 +1,6 @@
 # Trello 2.5
 
-Trello 2.5 is an enhanced clone of the popular Trello platform, rebuilt from the ground up as an update to my original Trello 2 project, which was developed during my time at Parsity. This updated version was built using Next.js' full-stack capabilities, integrates Google OAuth via NextAuth, includes a guest login option, leverages TanStack Query for efficient server state management, features a cleaner, more modern UI/UX, and uses MongoDB Atlas to securely store and manage data.
+Trello 2.5 is a clone of the popular Trello platform, rebuilt from the ground up as an update to my original Trello 2 project, which was developed during my time at Parsity. This updated version was built using Next.js' full-stack capabilities, integrates Google OAuth via NextAuth, includes a guest login option, leverages TanStack Query for efficient server state management, features a cleaner, more modern UI/UX, and uses MongoDB Atlas to securely store and manage data.
 
 The original Trello 2 project was built using legacy Redux, Create React App, and had a JWT-based authentication strategy. Feel Free to view that project [here](https://github.com/bcsurf2822/ParsityTrello).
 
