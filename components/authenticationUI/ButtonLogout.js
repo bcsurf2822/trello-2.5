@@ -5,21 +5,21 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const ButtonLogout = ({ guestUser }) => {
-  const [guestId, setGuestId] = useState(guestUser?._id || null); // Manage guestId state locally
+  const [guest, setGuest] = useState(guestUser|| null); // Manage guestId state locally
   const logoutGuest = useLogoutGuest();
   const router = useRouter();
 
-  console.log("GuestUser", guestUser); // Log the full guestUser object
-  console.log("Current guestId (state):", guestId); // Log the guestId state
+  console.log("GuestUser", guest); // Log the full guestUser object
+
 
   const handleLogout = () => {
-    if (guestId) {
+    if (guest._id) {
       logoutGuest.mutate(
-        { guestId }, 
+        { guestId: guestUser._id },
         {
           onSuccess: () => {
             console.log("Guest successfully logged out. Resetting guestId to null...");
-            setGuestId(null); // Reset guestId to null after successful logout
+            setGuest(null); // Reset guestId to null after successful logout
             router.push("/");
           },
         }
