@@ -12,6 +12,7 @@
     "@auth/mongodb-adapter": "^3.7.4",
     "@tanstack/react-query": "^5.62.8",
     "@tanstack/react-query-devtools": "^5.62.8",
+    "@vercel/analytics": "^1.4.1",
     "axios": "^1.7.9",
     "framer-motion": "^11.15.0",
     "mongodb": "^6.10.0",
