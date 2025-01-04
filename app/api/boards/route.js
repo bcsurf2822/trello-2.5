@@ -51,29 +51,20 @@ export async function GET(req) {
   try {
     await connectMongo();
 
-    // Attempt to retrieve session for authenticated users
     const session = await auth();
 
     let user;
 
     if (session) {
-      // Fetch the authenticated user
       user = await User.findById(session.user.id).populate("boards");
     } else {
-      // Handle guest user (this assumes you can identify the guest somehow)
-      user = await User.findOne({ isGuest: true }); // Add additional criteria if needed
+      user = await User.findOne({ isGuest: true });
     }
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // If the user is a guest, return an empty array
-    if (user.isGuest) {
-      return NextResponse.json([]);
-    }
-
-    // For authenticated users, return their boards
     return NextResponse.json(user.boards);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
