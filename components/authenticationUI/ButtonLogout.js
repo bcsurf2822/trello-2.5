@@ -25,6 +25,7 @@ const ButtonLogout = ({ guestUser }) => {
             );
             setGuest(null); // Reset guest to null after successful logout
             router.push("/");
+            router.refresh()
           },
         }
       );
