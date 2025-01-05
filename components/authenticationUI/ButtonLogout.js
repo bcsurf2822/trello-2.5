@@ -17,9 +17,6 @@ const ButtonLogout = ({ guestUser }) => {
         { guestId: guest._id },
         {
           onSuccess: () => {
-            console.log(
-              "Guest successfully logged out. Resetting guest to null..."
-            );
             setGuest(null); 
             router.push("/");
             router.refresh()

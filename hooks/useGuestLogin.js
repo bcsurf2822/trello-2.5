@@ -8,7 +8,6 @@ export const useGuestLogin = () => {
     mutationFn: async () => {
       try {
         const { data } = await axios.post("/api/auth/guest");
-        console.log("Guest session created:", data.guest);
         return data.guest;
       } catch (error) {
         console.error("Error logging in as guest:", error);
@@ -19,7 +18,6 @@ export const useGuestLogin = () => {
       }
     },
     onSuccess: (guest) => {
-      console.log("Guest login successful:", guest);
       queryClient.setQueryData(["guestUser"], guest);
     },
     onError: (error) => {
