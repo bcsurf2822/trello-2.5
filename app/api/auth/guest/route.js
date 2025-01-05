@@ -32,7 +32,7 @@ export async function POST() {
     });
 
     response.cookies.set("guestId", guestUser._id.toString(), {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: "strict",
       maxAge: 60 * 60 * 24, 

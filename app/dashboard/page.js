@@ -5,11 +5,18 @@ import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
 
 import { useFetchBoards } from "@/hooks/useFetchBoards";
+import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
+  const {  loading } = useGuest();
+
   const { data, isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
+
+  if (loading) {
+    return <span className="loading loading-bars loading-md"></span>;
+  }
 
   return (
     <div className="mt-16 mx-8">

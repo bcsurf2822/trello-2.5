@@ -17,7 +17,6 @@ export const useLogoutGuest = () => {
       }
     },
     onSuccess: () => {
-      console.log("Guest user logged out successfully");
       queryClient.invalidateQueries(["guestUser"]);
     },
     onError: (error) => {
