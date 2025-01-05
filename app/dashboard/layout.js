@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import NavBar from "@/components/dashboardUI/NavBar";
+import { GuestProvider } from "@/context/guestContext";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -15,8 +16,10 @@ export default async function DashboardLayout({ children }) {
   }
   return (
     <>
-      <NavBar />
-      {children}
+      <GuestProvider>
+        <NavBar />
+        {children}
+      </GuestProvider>
     </>
   );
 }

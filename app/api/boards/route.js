@@ -36,10 +36,8 @@ export async function POST(req) {
       name: body.name,
     });
 
-    if (!user.isGuest) {
-      user.boards.push(board._id);
-      await user.save();
-    }
+    user.boards.push(board._id);
+    await user.save();
 
     return NextResponse.json(board, { status: 201 });
   } catch (error) {
@@ -57,17 +55,23 @@ export async function GET(req) {
 
     if (session) {
       user = await User.findById(session.user.id).populate("boards");
+      console.log("Logged-in User Boards:", user.boards);
     } else {
-      console.log("Finding Guest Boards")
-      user = await User.findOne({ isGuest: true });
+      console.log("Finding Guest User");
+      user = await User.findOne({ isGuest: true }).populate("boards");
+      console.log("Guest User Boards:", user.boards);
     }
 
     if (!user) {
+      console.log("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    console.log("Final Boards Data Returned:", user.boards);
+
     return NextResponse.json(user.boards);
   } catch (error) {
+    console.error("Error in GET Boards Route:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

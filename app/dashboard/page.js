@@ -5,8 +5,11 @@ import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
 
 import { useFetchBoards } from "@/hooks/useFetchBoards";
+import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
+  const {guestId} = useGuest()
+  console.log("Guest ID in Dashboard", guestId)
   const { data, isLoading, isError } = useFetchBoards();
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
