@@ -50,16 +50,24 @@ export async function GET(req) {
     await connectMongo();
 
     const session = await auth();
+    const { searchParams } = new URL(req.url);
+    const guestId = searchParams.get("guestId");
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id).populate("boards");
       console.log("Logged-in User Boards:", user.boards);
-    } else {
-      console.log("Finding Guest User");
-      user = await User.findOne({ isGuest: true }).populate("boards");
+    } else if (guestId) {
+      console.log("Finding Guest User with ID:", guestId);
+      user = await User.findOne({
+        isGuest: true,
+        guestSessionId: guestId,
+      }).populate("boards");
       console.log("Guest User Boards:", user.boards);
+    } else {
+      console.log("No session or guest ID provided");
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -75,6 +83,7 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 export async function DELETE(req) {
   try {
