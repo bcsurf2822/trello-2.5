@@ -58,6 +58,7 @@ export async function GET(req) {
     if (session) {
       user = await User.findById(session.user.id).populate("boards");
     } else {
+      console.log("Finding Guest Boards")
       user = await User.findOne({ isGuest: true });
     }
 
