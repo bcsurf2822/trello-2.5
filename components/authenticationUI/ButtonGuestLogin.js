@@ -9,8 +9,7 @@ export default function ButtonGuestLogin() {
 
   const handleGuestLogin = () => {
     guestLogin.mutate(undefined, {
-      onSuccess: (guestSession) => {
-        console.log("Logged in as guest:", guestSession);
+      onSuccess: () => {
         router.push("/dashboard");
       },
       onError: (error) => {
