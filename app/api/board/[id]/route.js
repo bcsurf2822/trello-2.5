@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import Board from "@/models/Board";
 import { connectMongo } from "@/lib/mongoose";
 
-export async function GET( { params }) {
+export async function GET(request, { params }) {
   try {
     await connectMongo();
 

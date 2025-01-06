@@ -8,9 +8,7 @@ export const useCreateList = (boardId) => {
     mutationFn: (formData) => {
       return axios.post("/api/list", formData);
     },
-    onSuccess: (data) => {
-      console.log("List added:", data.data);
-
+    onSuccess: () => {
       queryClient.invalidateQueries(["board", boardId]);
     },
     onError: (error) => {

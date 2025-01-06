@@ -5,7 +5,6 @@ import { useState } from "react";
 export default function AddCardButton(data) {
   const [isAdding, setIsAdding] = useState(false);
   const [cardName, setCardName] = useState("");
-  console.log("AddCard Data:", data);
 
   const boardId = data.boardId;
   const listId = data.listId;

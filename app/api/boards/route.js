@@ -24,12 +24,11 @@ export async function GET(request) {
     }
 
     if (!user) {
+      console.log("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const boards = user.boards || [];
-    console.log("USER SERVER=========>", user)
-    console.log("Boards Server------->", boards)
 
     return NextResponse.json(boards);
   } catch (error) {
