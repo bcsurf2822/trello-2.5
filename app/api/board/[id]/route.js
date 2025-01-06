@@ -6,9 +6,9 @@ import { connectMongo } from "@/lib/mongoose";
 export async function GET( { params }) {
   try {
     await connectMongo();
-
+console.log("Server Params", params)
     const board = await Board.findById(params.id).populate("lists");
-
+console.log("SERVER BOARD ID", board)
     if (!board) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
