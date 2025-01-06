@@ -11,25 +11,32 @@ export async function GET(request) {
     const guestId = request.headers.get("Guest-ID");
     const session = await auth();
 
+    console.log("Guest ID in Request===========", guestId);
+    console.log("Session in Request===========", session);
+
     let user;
 
     if (session) {
       user = await User.findById(session.user.id).populate("boards");
+      console.log("Logged-in User==========>", user);
     } else if (guestId) {
       user = await User.findOne({ isGuest: true, _id: guestId }).populate(
         "boards"
       );
+      console.log("Guest User==========>", user);
     } else {
+      console.log("No session or guest ID provided");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
+      console.log("User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const boards = user.boards || [];
-    console.log("USER SERVER=========>", user)
-    console.log("Boards Server------->", boards)
+    console.log("USER SERVER=========>", user);
+    console.log("Boards Server------->", boards);
 
     return NextResponse.json(boards);
   } catch (error) {
