@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 
 export default function ButtonGuestLogin() {
   const router = useRouter();
-  const guestLogin = useGuestLogin();
+  const { mutate, isPending } = useGuestLogin();
+
+  console.log("GuestLogin Mutation Object:", useGuestLogin());
 
   const handleGuestLogin = () => {
-    guestLogin.mutate(undefined, {
+    console.log("Guest login initiated.");
+    mutate(undefined, {
       onSuccess: () => {
+        console.log("Guest login successful. Redirecting to /dashboard.");
         router.push("/dashboard");
       },
       onError: (error) => {
@@ -19,15 +23,17 @@ export default function ButtonGuestLogin() {
     });
   };
 
+  console.log("guestLogin.isLoading:", isPending);
+
   return (
     <button
       onClick={handleGuestLogin}
       className={`bg-green-300 px-4 py-1 rounded-xl text-gray-950 font-bold ${
-        guestLogin.isLoading ? "opacity-50 cursor-not-allowed" : ""
+        isPending ? "opacity-50 cursor-not-allowed" : ""
       }`}
-      disabled={guestLogin.isLoading}
+      disabled={isPending}
     >
-      {guestLogin.isLoading ? "Logging in..." : "Guest"}
+      {isPending ? "Logging in..." : "Guest"}
     </button>
   );
 }

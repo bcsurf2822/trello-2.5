@@ -9,18 +9,13 @@ import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
   const { loading } = useGuest();
-console.log("This isn't a guest")
   const { data, isLoading, isError } = useFetchBoards();
-console.log("Past UseFetchBoards")
+
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
   if (loading) {
     return <span className="loading loading-bars loading-md"></span>;
-  }
-
-  if (!loading && !isLoading) {
-    console.log("Dashboard Data", data);
   }
 
   return (
