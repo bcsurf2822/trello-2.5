@@ -9,7 +9,7 @@ export const useDeleteList = (boardId) => {
       return axios.delete("/api/list", { data: { boardId, listId } });
     },
     onSuccess: () => {
-      console.log("List deleted successfully");
+  
 
 
       queryClient.invalidateQueries(["board", boardId]);

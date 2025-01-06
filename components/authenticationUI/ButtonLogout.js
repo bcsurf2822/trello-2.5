@@ -9,17 +9,15 @@ const ButtonLogout = ({ guestUser }) => {
   const logoutGuest = useLogoutGuest();
   const router = useRouter();
 
-
-
   const handleLogout = () => {
     if (guest?._id) {
       logoutGuest.mutate(
         { guestId: guest._id },
         {
           onSuccess: () => {
-            setGuest(null); 
+            setGuest(null);
             router.push("/");
-            router.refresh()
+            router.refresh();
           },
         }
       );
@@ -32,11 +30,15 @@ const ButtonLogout = ({ guestUser }) => {
     <button
       onClick={handleLogout}
       className={`btn btn-error font-bold ${
-        logoutGuest.isLoading ? "loading" : ""
+        logoutGuest.isPending ? "loading" : ""
       }`}
-      disabled={logoutGuest.isLoading}
+      disabled={logoutGuest.isPending}
     >
-      {logoutGuest.isLoading ? "Logging out..." : "Logout"}
+      {logoutGuest.isPending ? (
+        <span className="loading loading-spinner text-neutral"></span>
+      ) : (
+        "Logout"
+      )}
     </button>
   );
 };

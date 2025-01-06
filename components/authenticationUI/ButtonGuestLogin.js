@@ -7,13 +7,10 @@ export default function ButtonGuestLogin() {
   const router = useRouter();
   const { mutate, isPending } = useGuestLogin();
 
-  console.log("GuestLogin Mutation Object:", useGuestLogin());
-
   const handleGuestLogin = () => {
     console.log("Guest login initiated.");
     mutate(undefined, {
       onSuccess: () => {
-        console.log("Guest login successful. Redirecting to /dashboard.");
         router.push("/dashboard");
       },
       onError: (error) => {
@@ -23,8 +20,6 @@ export default function ButtonGuestLogin() {
     });
   };
 
-  console.log("guestLogin.isLoading:", isPending);
-
   return (
     <button
       onClick={handleGuestLogin}
@@ -33,7 +28,11 @@ export default function ButtonGuestLogin() {
       }`}
       disabled={isPending}
     >
-      {isPending ? "Logging in..." : "Guest"}
+      {isPending ? (
+        <span className="loading loading-spinner text-neutral"></span>
+      ) : (
+        "Guest"
+      )}
     </button>
   );
 }
