@@ -36,4 +36,36 @@ export async function GET(request) {
   }
 }
 
+export async function DELETE(req) {
+  try {
+    await connectMongo();
 
+    // Find all users with isGuest: true
+    const guestUsers = await User.find({ isGuest: true });
+
+    if (!guestUsers.length) {
+      return NextResponse.json(
+        { message: "No guest users found" },
+        { status: 404 }
+      );
+    }
+
+    // Delete all users with isGuest: true
+    await User.deleteMany({ isGuest: true });
+
+    const response = NextResponse.json({
+      message: "All guest users deleted successfully",
+      deletedCount: guestUsers.length,
+    });
+
+    response.headers.set("Cache-Control", "no-store");
+
+    return response;
+  } catch (error) {
+    console.error("Error deleting all guest users:", error);
+    return NextResponse.json(
+      { error: "Unable to delete all guest users" },
+      { status: 500 }
+    );
+  }
+}

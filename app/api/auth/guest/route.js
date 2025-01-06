@@ -4,12 +4,9 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    console.log("Starting POST request for guest login...");
-
     await connectMongo();
-    console.log("MongoDB connection successful.");
 
-   
+  
     const guestCount = await User.countDocuments({ isGuest: true });
     const guestName = `guest${guestCount + 1}`;
 
@@ -18,8 +15,6 @@ export async function POST() {
       isGuest: true,
       email: `${guestName}@guest.com`,
     });
-
-    console.log("New guest user created:", guestUser);
 
 
     const response = NextResponse.json({
@@ -37,8 +32,6 @@ export async function POST() {
       sameSite: "strict",
       maxAge: 60 * 60 * 24, 
     });
-
-    console.log("Guest ID set in cookies:", guestUser._id.toString());
 
     return response;
   } catch (error) {
