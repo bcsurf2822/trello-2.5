@@ -11,9 +11,6 @@ export const useDeleteCard = (boardId, listId) => {
       });
     },
     onSuccess: () => {
-      console.log("Card deleted successfully");
-
-  
       queryClient.invalidateQueries(["board", boardId]);
     },
     onError: (error) => {

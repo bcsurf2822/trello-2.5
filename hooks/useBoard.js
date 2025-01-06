@@ -3,11 +3,11 @@ import axios from "axios";
 
 export const useBoard = (boardId) => {
   return useQuery({
-    queryKey: ["board", boardId], 
+    queryKey: ["board", boardId],
     queryFn: async () => {
       const { data } = await axios.get(`/api/board/${boardId}`);
       return data;
     },
-    enabled: !!boardId, 
+    enabled: !!boardId,
   });
 };

@@ -17,7 +17,6 @@ export const useDeleteBoard = () => {
       }
     },
     onSuccess: () => {
-      console.log("Board deleted successfully");
       queryClient.invalidateQueries(["boards"]);
     },
     onError: (error) => {

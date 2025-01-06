@@ -9,8 +9,11 @@ import { use, useEffect, useState } from "react";
 export default function BoardPage({ params }) {
   const unwrappedParams = use(params);
   const { id } = unwrappedParams;
+
   const { data: board, isLoading, error } = useBoard(id);
+
   const [lists, setLists] = useState(board?.lists || []);
+
   const saveOrder = useSaveOrder(id);
 
   useEffect(() => {
@@ -25,7 +28,8 @@ export default function BoardPage({ params }) {
     saveOrder.mutate(newOrder);
   };
 
-  if (isLoading) return <span className="loading loading-dots loading-lg"></span>;
+  if (isLoading)
+    return <span className="loading loading-dots loading-lg"></span>;
   if (error) return <p>Error loading board: {error.message}</p>;
 
   return (
