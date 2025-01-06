@@ -28,6 +28,8 @@ export async function GET(request) {
     }
 
     const boards = user.boards || [];
+    console.log("USER SERVER=========>", user)
+    console.log("Boards Server------->", boards)
 
     return NextResponse.json(boards);
   } catch (error) {

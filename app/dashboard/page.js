@@ -8,14 +8,19 @@ import { useFetchBoards } from "@/hooks/useFetchBoards";
 import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
-  const {  loading } = useGuest();
+  const { loading } = useGuest();
 
   const { data, isLoading, isError } = useFetchBoards();
+
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();
 
   if (loading) {
     return <span className="loading loading-bars loading-md"></span>;
+  }
+
+  if (!loading && !isLoading) {
+    console.log("Dashboard Data", data);
   }
 
   return (
@@ -32,9 +37,10 @@ export default function DashBoard() {
         </div>
 
         {isLoading && <span className="loading loading-bars loading-md"></span>}
-        {isError && <p>Error loading boards..</p>}
+        {isError && <p>Error loading boards...</p>}
 
-        {!isLoading &&
+        {!loading &&
+          !isLoading &&
           !isError &&
           data.map((board) => (
             <div key={board._id} className="group">
