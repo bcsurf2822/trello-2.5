@@ -8,10 +8,8 @@ import { useFetchBoards } from "@/hooks/useFetchBoards";
 import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
-  const { loading, guestId } = useGuest();
+  const { loading } = useGuest();
   const { data, isLoading, isError } = useFetchBoards();
-
-  console.log("Guest Info Dash", guestId)
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
   const closeModal = () => document.getElementById("my_modal_1").close();

@@ -9,19 +9,16 @@ const FormNewBoard = ({ closeModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (createBoard.isLoading) return;
-
+    if (createBoard.isPending) return;
+    
     const boardData = { name };
     createBoard.mutate(boardData, {
       onSuccess: () => {
         setName("");
-        // toast.success("Board Successfully Created");
-        console.log("Board Created")
         closeModal();
       },
       onError: () => {
-        // toast.error("Failed to create board. Please try again.");
-        console.error('error', code);
+        console.error("error", code);
       },
     });
   };
@@ -62,7 +59,7 @@ const FormNewBoard = ({ closeModal }) => {
         type="submit"
         className="btn btn-primary btn-block"
       >
-        {createBoard.isLoading && (
+        {createBoard.isPending && (
           <span className="loading loading-spinner loading-xs"></span>
         )}
         Submit

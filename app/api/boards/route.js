@@ -98,14 +98,17 @@ export async function DELETE(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -121,15 +124,21 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
+    // Delete the board
     await Board.deleteOne({ _id: boardId, userId: user.id });
 
+    // Remove the board from the user's boards array if the user is not a guest
     if (!user.isGuest) {
       user.boards = user.boards.filter((id) => id.toString() !== boardId);
       await user.save();
     }
 
+    console.log("Board Deleted:", board);
+    console.log("User Updated After Deletion:", user);
+
     return NextResponse.json({ message: "Board deleted successfully" });
   } catch (error) {
+    console.error("Error in DELETE Boards Route:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
