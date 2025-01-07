@@ -1,8 +1,6 @@
 import { useDeleteCard } from "@/hooks/useDeleteCard";
 
 export default function Cards({ card, listId, boardId }) {
-  console.log("Card", card);
-
   const deleteCardMutation = useDeleteCard(boardId, listId);
 
   const handleDeleteCard = () => {
@@ -14,7 +12,7 @@ export default function Cards({ card, listId, boardId }) {
       <span>{card.name}</span>
       <button
         onClick={handleDeleteCard}
-        disabled={deleteCardMutation.isLoading}
+        disabled={deleteCardMutation.isPending}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -9,16 +9,18 @@ const FormNewBoard = ({ closeModal }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (createBoard.isPending) return;
-    
+
     const boardData = { name };
     createBoard.mutate(boardData, {
       onSuccess: () => {
         setName("");
         closeModal();
       },
-      onError: () => {
-        console.error("error", code);
+      onError: (error) => {
+        console.error("Error creating board:", error);
+        toast.error("Failed to create board. Please try again.");
       },
     });
   };
@@ -27,14 +29,19 @@ const FormNewBoard = ({ closeModal }) => {
     e.preventDefault();
     closeModal();
   };
+
   return (
-    <form className="bg-base-100 p-8 rounded-3xl space-y-8">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-base-100 p-8 rounded-3xl space-y-8"
+    >
       {/* TITLE */}
       <div className="flex justify-between">
         <p className="font-bold text-lg">Create board</p>
         <button
           onClick={handleClose}
-          className="text-red-500 bg-gray-200 hover:bg-gray-300 font-bold p-1 rounded"
+          type="button"
+          className="text-red-500 hover:bg-gray-300 font-bold p-1 rounded"
         >
           ✕
         </button>
@@ -51,18 +58,23 @@ const FormNewBoard = ({ closeModal }) => {
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter board name"
           className="border-black border rounded mt-1 pl-1 w-full"
+          required
         />
       </label>
+
       {/* BUTTON */}
       <button
-        onClick={handleSubmit}
         type="submit"
-        className="btn btn-primary btn-block"
+        className={`btn btn-primary btn-block ${
+          createBoard.isPending ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={createBoard.isPending}
       >
-        {createBoard.isPending && (
+        {createBoard.isPending ? (
           <span className="loading loading-spinner loading-xs"></span>
+        ) : (
+          "Submit"
         )}
-        Submit
       </button>
     </form>
   );
