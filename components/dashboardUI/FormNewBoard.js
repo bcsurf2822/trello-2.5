@@ -15,11 +15,13 @@ const FormNewBoard = ({ closeModal }) => {
     createBoard.mutate(boardData, {
       onSuccess: () => {
         setName("");
-        toast.success("Board Successfully Created");
+        // toast.success("Board Successfully Created");
+        console.log("Board Created")
         closeModal();
       },
       onError: () => {
-        toast.error("Failed to create board. Please try again.");
+        // toast.error("Failed to create board. Please try again.");
+        console.error('error', code);
       },
     });
   };

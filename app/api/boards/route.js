@@ -50,14 +50,17 @@ export async function POST(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -72,8 +75,12 @@ export async function POST(req) {
     user.boards.push(board._id);
     await user.save();
 
+    console.log("Board Created:", board);
+    console.log("User Updated with Board:", user);
+
     return NextResponse.json(board, { status: 201 });
   } catch (error) {
+    console.error("Error in POST Boards Route:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
