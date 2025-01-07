@@ -4,7 +4,7 @@ import { FaLinkedin } from "react-icons/fa";
 export default function Footer() {
   return (
     <footer className="w-full flex gap-4 bg-gray-600 text-white py-2 text-center justify-center items-center">
-      <p>Developed by Benjamin Corbett</p>
+      <p>Benjamin Corbett</p>
       <a
         href="https://www.linkedin.com/in/your-linkedin-profile/" 
         target="_blank" 
