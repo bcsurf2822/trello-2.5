@@ -1,5 +1,6 @@
 "use client";
 import { FaLinkedin } from "react-icons/fa";
+// footer
 
 export default function Footer() {
   return (
