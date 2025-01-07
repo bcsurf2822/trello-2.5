@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
-export const useGuestLogin = () => {
+export const useLoginGuest = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: async () => {
@@ -19,12 +21,14 @@ export const useGuestLogin = () => {
     },
     onSuccess: (guest) => {
       queryClient.setQueryData(["guestUser"], guest);
+      router.push("/dashboard");
     },
     onError: (error) => {
       console.error(
         "Error during guest login:",
         error.response?.data || error.message || error
       );
+      alert(error.message || "Failed to log in as guest.");
     },
   });
 };
