@@ -6,16 +6,15 @@ export async function POST() {
   try {
     await connectMongo();
 
-  
-    const guestCount = await User.countDocuments({ isGuest: true });
-    const guestName = `guest${guestCount + 1}`;
+    const uniqueId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const guestName = `guest-${uniqueId}`;
+    const guestEmail = `${guestName}@guest.com`;
 
     const guestUser = await User.create({
       name: guestName,
       isGuest: true,
-      email: `${guestName}@guest.com`,
+      email: guestEmail,
     });
-
 
     const response = NextResponse.json({
       message: "Guest user created successfully",
@@ -30,7 +29,7 @@ export async function POST() {
       httpOnly: false,
       secure: true,
       sameSite: "strict",
-      maxAge: 60 * 60 * 24, 
+      maxAge: 60 * 60 * 24,
     });
 
     return response;
