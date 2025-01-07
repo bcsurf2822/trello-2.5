@@ -1,8 +1,10 @@
 import { auth } from "@/auth";
+import Footer from "@/components/dashboardUI/Footer";
 import NavBar from "@/components/dashboardUI/NavBar";
 import { GuestProvider } from "@/context/guestContext";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { FaLinkedin } from "react-icons/fa";
 
 export default async function DashboardLayout({ children }) {
   const session = await auth();
@@ -17,8 +19,11 @@ export default async function DashboardLayout({ children }) {
   return (
     <>
       <GuestProvider>
-        <NavBar />
-        {children}
+        <div className="min-h-screen flex flex-col">
+          <NavBar />
+          <div className="flex-grow">{children}</div>
+          <Footer />
+        </div>
       </GuestProvider>
     </>
   );
