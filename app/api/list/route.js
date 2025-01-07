@@ -51,9 +51,6 @@ export async function POST(req) {
     board.lists.push(newList);
     await board.save();
 
-    console.log("New List Added to Board:", newList);
-    console.log("Updated Board:", board);
-
     return NextResponse.json({ message: "List added successfully", board });
   } catch (error) {
     console.error("Error in POST Lists Route:", error.message);
@@ -108,12 +105,8 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });
     }
 
-    // Remove the list from the board's lists array
     board.lists.splice(listIndex, 1);
     await board.save();
-
-    console.log(`List with ID ${listId} deleted from board ${boardId}`);
-    console.log("Updated Board:", board);
 
     return NextResponse.json({ message: "List deleted successfully", board });
   } catch (error) {
@@ -121,7 +114,6 @@ export async function DELETE(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
 
 export async function PUT(req) {
   try {
