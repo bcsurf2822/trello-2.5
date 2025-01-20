@@ -128,14 +128,17 @@ export async function PUT(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -155,12 +158,14 @@ export async function PUT(req) {
 
     await board.save();
 
+    console.log("List order updated successfully:", board.lists);
+
     return NextResponse.json({
       message: "Lists reordered successfully",
       board,
     });
   } catch (error) {
-    console.error("Error saving list order:", error);
+    console.error("Error saving list order:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

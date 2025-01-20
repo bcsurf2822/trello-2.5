@@ -19,12 +19,12 @@ export const useCreateCard = (boardId) => {
           "Error in mutationFn:",
           error.response?.data || error.message || error
         );
-        throw error; // Rethrow to trigger onError
+        throw error; 
       }
     },
     onSuccess: () => {
       console.log("Mutation successful. Invalidating board query...");
-      queryClient.invalidateQueries(["board", boardId]); // Refresh the board data
+      queryClient.invalidateQueries(["board", boardId]);
     },
     onError: (error) => {
       console.error(
