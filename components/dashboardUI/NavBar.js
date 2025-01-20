@@ -14,6 +14,8 @@ export default async function NavBar() {
     guestUser = await fetchGuestInfo(guestId);
   }
 
+  console.log("Guest", guestUser)
+
   return (
     <nav className="navbar bg-neutral-300 ">
       <div className="navbar-start">
@@ -61,7 +63,7 @@ export default async function NavBar() {
       <div className="navbar-end flex gap-3 ">
         {guestUser ? (
           <div className="text-sm font-semibold flex justify-center gap-1">
-            Logged In As: <span className="font-bold"> {guestUser.name}</span>
+            Logged In As: <span className="font-bold"> {guestUser.email}</span>
           </div>
         ) : (
           <ButtonLogin session={session} />
