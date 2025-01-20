@@ -6,9 +6,9 @@ export async function POST() {
   try {
     await connectMongo();
 
-    const uniqueId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const guestName = `guest-${uniqueId}`;
-    const guestEmail = `${guestName}@guest.com`;
+    const uniqueId = `${Date.now()}-${Math.floor(Math.random() * 100)}`;
+    const guestName = `guest${uniqueId.slice(-2)}`;
+    const guestEmail = `${guestName}@trello2.5.com`;
 
     const guestUser = await User.create({
       name: guestName,

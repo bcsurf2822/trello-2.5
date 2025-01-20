@@ -61,7 +61,7 @@ export default async function NavBar() {
       <div className="navbar-end flex gap-3 ">
         {guestUser ? (
           <div className="text-sm font-semibold flex justify-center gap-1">
-            Logged In As: <span className="font-bold"> {guestUser.name}</span>
+            Logged In As: <span className="font-bold"> {guestUser.email}</span>
           </div>
         ) : (
           <ButtonLogin session={session} />
