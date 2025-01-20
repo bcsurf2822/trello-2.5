@@ -32,14 +32,17 @@ export async function POST(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -71,6 +74,9 @@ export async function POST(req) {
     list.cards.push(newCard);
 
     await board.save();
+
+    console.log("Card Added:", newCard);
+    console.log("Updated Board:", board);
 
     return NextResponse.json({ message: "Card added successfully", board });
   } catch (error) {
@@ -106,14 +112,17 @@ export async function DELETE(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
@@ -145,9 +154,12 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Card not found" }, { status: 404 });
     }
 
-    list.cards.splice(cardIndex, 1);
+    const removedCard = list.cards.splice(cardIndex, 1);
 
     await board.save();
+
+    console.log("Card Deleted:", removedCard);
+    console.log("Updated Board:", board);
 
     return NextResponse.json({ message: "Card deleted successfully", board });
   } catch (error) {

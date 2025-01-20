@@ -1,17 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useLogoutGuest } from "@/hooks/useLogoutGuest";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useLogoutGuest } from "@/hooks/useLogoutGuest";
 
 const ButtonLogout = ({ guestUser }) => {
   const [guest, setGuest] = useState(guestUser || null);
-  const logoutGuest = useLogoutGuest();
+  const { mutate, isPending, isSuccess } = useLogoutGuest();
   const router = useRouter();
 
   const handleLogout = () => {
     if (guest?._id) {
-      logoutGuest.mutate(
+      mutate(
         { guestId: guest._id },
         {
           onSuccess: () => {
@@ -26,11 +26,15 @@ const ButtonLogout = ({ guestUser }) => {
     }
   };
 
+  const isLoading = isPending || isSuccess;
+
   useEffect(() => {
     if (!guest?._id) return;
 
     const handleBeforeUnload = (event) => {
-      logoutGuest.mutate({ guestId: guest._id });
+      const payload = JSON.stringify({ guestId: guest._id });
+      navigator.sendBeacon("/api/auth/guest", payload);
+
       event.preventDefault();
       event.returnValue = "";
     };
@@ -40,17 +44,15 @@ const ButtonLogout = ({ guestUser }) => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [guest, logoutGuest]);
+  }, [guest]);
 
   return (
     <button
       onClick={handleLogout}
-      className={`btn btn-error font-bold ${
-        logoutGuest.isPending ? "loading" : ""
-      }`}
-      disabled={logoutGuest.isPending}
+      className={`btn btn-error font-bold ${isLoading ? "loading" : ""}`}
+      disabled={isLoading}
     >
-      {logoutGuest.isPending ? (
+      {isLoading ? (
         <span className="loading loading-spinner text-neutral"></span>
       ) : (
         "Logout"

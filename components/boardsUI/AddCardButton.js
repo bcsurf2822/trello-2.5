@@ -2,14 +2,11 @@
 import { useCreateCard } from "@/hooks/useCreateCard";
 import { useState } from "react";
 
-export default function AddCardButton(data) {
+export default function AddCardButton({ boardId, listId }) {
   const [isAdding, setIsAdding] = useState(false);
   const [cardName, setCardName] = useState("");
 
-  const boardId = data.boardId;
-  const listId = data.listId;
-
-  const createCardMutation = useCreateCard(boardId, listId);
+  const createCardMutation = useCreateCard(boardId);
 
   const handleAddCardClick = () => {
     setIsAdding(true);
@@ -33,6 +30,10 @@ export default function AddCardButton(data) {
         onSuccess: () => {
           setIsAdding(false);
           setCardName("");
+          console.log("Card added successfully!");
+        },
+        onError: (error) => {
+          console.error("Error adding card:", error);
         },
       }
     );
