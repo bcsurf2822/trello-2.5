@@ -9,6 +9,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
 
+    // Validate required fields
     if (!body.boardId) {
       return NextResponse.json(
         { error: "Board ID is required" },
@@ -32,20 +33,26 @@ export async function POST(req) {
 
     await connectMongo();
 
+    const guestId = req.headers.get("Guest-ID");
     const session = await auth();
 
     let user;
 
     if (session) {
+      // Find authenticated user
       user = await User.findById(session.user.id);
+    } else if (guestId) {
+      // Find guest user by Guest-ID
+      user = await User.findOne({ isGuest: true, _id: guestId });
     } else {
-      user = await User.findOne({ isGuest: true });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Find board belonging to the user
     const board = await Board.findOne({
       _id: body.boardId,
       userId: user.id,
@@ -55,6 +62,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
+    // Find the specific list in the board
     const list = board.lists.find(
       (list) => list._id.toString() === body.listId
     );
@@ -63,6 +71,7 @@ export async function POST(req) {
       return NextResponse.json({ error: "List not found" }, { status: 404 });
     }
 
+    // Add the new card to the list
     const newCard = {
       name: body.name,
       description: body.description || "",
@@ -72,12 +81,16 @@ export async function POST(req) {
 
     await board.save();
 
+    console.log("Card Added:", newCard);
+    console.log("Updated Board:", board);
+
     return NextResponse.json({ message: "Card added successfully", board });
   } catch (error) {
     console.error("Error adding card:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
 
 export async function DELETE(req) {
   try {
