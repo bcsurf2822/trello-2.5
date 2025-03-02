@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectMongo } from "@/lib/mongoose";
 import Board from "@/models/Board";
-
 import User from "@/models/User";
 
 export async function POST(req) {
@@ -168,71 +167,61 @@ export async function DELETE(req) {
   }
 }
 
-export async function PUT(req) {
+export async function PUT(request) {
   try {
-    const body = await req.json();
+    const { boardId, cardId, sourceListId, destinationListId, newIndex } =
+      await request.json();
 
-    if (!body.boardId || !body.cardOrder) {
-      return NextResponse.json(
-        { error: "Board ID and card order are required" },
-        { status: 400 }
-      );
-    }
+    const guestId = request.headers.get("Guest-ID");
 
     await connectMongo();
 
-    const guestId = req.headers.get("Guest-ID");
-    const session = await auth();
+    const query = guestId
+      ? { _id: boardId, guestId: guestId }
+      : { _id: boardId };
 
-    let user;
-
-    if (session) {
-      user = await User.findById(session.user.id);
-    } else if (guestId) {
-      user = await User.findOne({ isGuest: true, _id: guestId });
-    } else {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const board = await Board.findOne({
-      _id: body.boardId,
-      userId: user.id,
-    });
+    const board = await Board.findOne(query);
 
     if (!board) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-    const { cardOrder } = body;
+    const sourceListIndex = board.lists.findIndex(
+      (list) => list._id.toString() === sourceListId
+    );
+    if (sourceListIndex === -1) {
+      return NextResponse.json(
+        { error: "Source list not found" },
+        { status: 404 }
+      );
+    }
 
-    board.lists.forEach((list) => {
-      const listIdStr = list._id.toString();
-      if (cardOrder[listIdStr]) {
-        const cardMap = {};
-        list.cards.forEach((card) => {
-          cardMap[card._id.toString()] = card;
-        });
+    const destinationListIndex = board.lists.findIndex(
+      (list) => list._id.toString() === destinationListId
+    );
+    if (destinationListIndex === -1) {
+      return NextResponse.json(
+        { error: "Destination list not found" },
+        { status: 404 }
+      );
+    }
 
-        list.cards = cardOrder[listIdStr]
-          .map((cardId) => cardMap[cardId])
-          .filter((card) => card);
-      }
-    });
+    const cardIndex = board.lists[sourceListIndex].cards.findIndex(
+      (card) => card._id.toString() === cardId
+    );
+    if (cardIndex === -1) {
+      return NextResponse.json({ error: "Card not found" }, { status: 404 });
+    }
+
+    const [card] = board.lists[sourceListIndex].cards.splice(cardIndex, 1);
+
+    board.lists[destinationListIndex].cards.splice(newIndex, 0, card);
 
     await board.save();
 
-    console.log("Card order updated successfully");
-
-    return NextResponse.json({
-      message: "Cards reordered successfully",
-      board,
-    });
+    return NextResponse.json({ success: true, board });
   } catch (error) {
-    console.error("Error saving card order:", error.message);
+    console.error("Error reordering card:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

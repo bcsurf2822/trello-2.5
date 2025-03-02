@@ -1,17 +1,19 @@
+// components/boardsUI/List.js
 import AddCardButton from "./AddCardButton";
-import Cards from "./Cards";
+import DragCard from "./DragCard";
 import { useDeleteList } from "@/hooks/useDeleteList";
+import { AnimatePresence } from "framer-motion";
 
 export default function List({ list, boardId, dragControls }) {
   const listId = list._id;
   const deleteList = useDeleteList(boardId);
-
+  
   const handleDeleteList = () => {
     deleteList.mutate({ listId });
   };
 
   return (
-    <div className="bg-neutral-100 w-[20vw] pb-2 rounded-lg">
+    <div className="bg-neutral-100 w-[20vw] pb-2 rounded-lg flex flex-col">
       <div className="flex justify-between items-center py-2 px-1">
         <h2
           className="underline font-semibold pl-2 cursor-grab"
@@ -35,20 +37,24 @@ export default function List({ list, boardId, dragControls }) {
           />
         </svg>
       </div>
-
-      {list.cards.length > 0 && (
-        <ul className="flex flex-col gap-1">
+      
+      {/* Card container with list ID for drop target detection */}
+      <ul 
+        data-list-id={list._id} 
+        className="flex flex-col gap-1 p-1 min-h-[50px] h-full"
+      >
+        <AnimatePresence>
           {list.cards.map((card) => (
-            <Cards
+            <DragCard
               key={card._id}
               card={card}
               boardId={boardId}
               listId={list._id}
             />
           ))}
-        </ul>
-      )}
-
+        </AnimatePresence>
+      </ul>
+      
       <div className="mt-2">
         <AddCardButton boardId={boardId} listId={listId} />
       </div>
