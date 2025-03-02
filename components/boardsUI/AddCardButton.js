@@ -1,11 +1,11 @@
 "use client";
 import { useCreateCard } from "@/hooks/useCreateCard";
 import { useState } from "react";
+import { FaPlus } from "react-icons/fa";
 
 export default function AddCardButton({ boardId, listId }) {
   const [isAdding, setIsAdding] = useState(false);
   const [cardName, setCardName] = useState("");
-
   const createCardMutation = useCreateCard(boardId);
 
   const handleAddCardClick = () => {
@@ -18,7 +18,7 @@ export default function AddCardButton({ boardId, listId }) {
   };
 
   const handleSaveCard = () => {
-    if (!cardName.trim()) return;
+    if (!cardName.trim() || createCardMutation.isLoading) return;
 
     createCardMutation.mutate(
       {
@@ -40,9 +40,9 @@ export default function AddCardButton({ boardId, listId }) {
   };
 
   return (
-    <div>
+    <div className="w-full">
       {isAdding ? (
-        <div className="flex flex-col gap-2 justify-center items-center">
+        <div className="p-1">
           <input
             type="text"
             placeholder="Enter card name"
@@ -51,17 +51,25 @@ export default function AddCardButton({ boardId, listId }) {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSaveCard();
             }}
-            className="input input-bordered input-sm w-full px-1"
+            className="w-full p-2 border border-slate-300 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm shadow-sm mb-2"
+            autoFocus
           />
-          <div className="flex gap-2  w-full justify-end mr-2">
+          <div className="flex gap-2 justify-end">
             <button
               onClick={handleSaveCard}
               disabled={createCardMutation.isLoading}
-              className="btn btn-primary btn-sm"
+              className={`py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors ${
+                !cardName.trim() || createCardMutation.isLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
             >
-              Save
+              {createCardMutation.isLoading ? "Saving..." : "Save"}
             </button>
-            <button onClick={handleCancel} className="btn btn-error btn-sm">
+            <button
+              onClick={handleCancel}
+              className="py-1.5 px-3 bg-red-500 hover:bg-red-600 text-white text-sm rounded-md transition-colors"
+            >
               Cancel
             </button>
           </div>
@@ -69,23 +77,10 @@ export default function AddCardButton({ boardId, listId }) {
       ) : (
         <button
           onClick={handleAddCardClick}
-          className="bg-neutral-300 text-black w-full py-2 hover:bg-slate-400 pr-2 flex justify-end items-center gap-2"
+          className="w-full flex items-center justify-between py-1.5 px-3 text-slate-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
         >
-          Add Card{" "}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
+          <span className="text-sm">Add Card</span>
+          <FaPlus size={12} />
         </button>
       )}
     </div>

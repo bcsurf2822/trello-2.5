@@ -10,18 +10,21 @@ export default async function NavBar() {
   const cookieStore = await cookies();
   const guestId = cookieStore.get("guestId")?.value;
   let guestUser = null;
-  
+
   if (!session && guestId) {
     guestUser = await fetchGuestInfo(guestId);
   }
-  
+
   return (
     <nav className="bg-gradient-to-r from-slate-50 to-slate-100 shadow-md px-4 py-2 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Left side - Logo and hamburger menu */}
         <div className="flex items-center">
           <div className="dropdown lg:hidden mr-2">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle hover:bg-slate-200">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle hover:bg-slate-200"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -38,11 +41,8 @@ export default async function NavBar() {
               </svg>
             </div>
           </div>
-          
-          <Link
-            href={"/dashboard"}
-            className="flex items-center gap-2 group"
-          >
+
+          <Link href={"/dashboard"} className="flex items-center gap-2 group">
             <span className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-blue-900 transition duration-300">
               Trello 2.5
             </span>
@@ -64,18 +64,18 @@ export default async function NavBar() {
             </div>
           </Link>
         </div>
-        
-        {/* Center - For future nav items if needed */}
-        <div className="hidden lg:flex">
-          {/* You can add navigation links here */}
-        </div>
-        
-        {/* Right side - Account management */}
+
+        <div className="hidden lg:flex"></div>
+
         <div className="flex items-center gap-4">
           {guestUser ? (
             <div className="flex items-center bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
-              <span className="text-sm text-slate-500 mr-1.5">Logged in as:</span>
-              <span className="text-sm font-bold text-slate-700">{guestUser.email}</span>
+              <span className="text-sm text-slate-500 mr-1.5">
+                Logged in as:
+              </span>
+              <span className="text-sm font-bold text-slate-700">
+                {guestUser.email}
+              </span>
             </div>
           ) : (
             <ButtonLogin session={session} />
