@@ -1,6 +1,6 @@
 "use client";
 import AddList from "@/components/boardsUI/AddList";
-import List from "@/components/boardsUI/List";
+import DragList from "@/components/boardsUI/DragList";
 import { useBoard } from "@/hooks/useBoard";
 import { useSaveOrder } from "@/hooks/useSaveListOrder";
 import { Reorder } from "framer-motion";
@@ -37,20 +37,14 @@ export default function BoardPage({ params }) {
       <h1 className="text-3xl font-bold ml-2 my-2 underline">{board?.name}</h1>
       <br className="mx-2 mb-1" />
       <section className="flex gap-4 mx-2">
-        <Reorder.Group
+      <Reorder.Group
           axis="x"
           values={lists}
           onReorder={handleReorder}
           className="flex gap-2"
         >
           {lists.map((list) => (
-            <Reorder.Item
-              key={list._id}
-              value={list}
-              className="flex-shrink-0 w-[20vw]"
-            >
-              <List list={list} boardId={id} />
-            </Reorder.Item>
+            <DragList key={list._id} list={list} boardId={id} />
           ))}
         </Reorder.Group>
         <div>

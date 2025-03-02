@@ -48,6 +48,9 @@ export default function AddCardButton({ boardId, listId }) {
             placeholder="Enter card name"
             value={cardName}
             onChange={(e) => setCardName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSaveCard();
+            }}
             className="input input-bordered input-sm w-full px-1"
           />
           <div className="flex gap-2  w-full justify-end mr-2">

@@ -2,7 +2,7 @@ import AddCardButton from "./AddCardButton";
 import Cards from "./Cards";
 import { useDeleteList } from "@/hooks/useDeleteList";
 
-export default function List({ list, boardId }) {
+export default function List({ list, boardId, dragControls }) {
   const listId = list._id;
   const deleteList = useDeleteList(boardId);
 
@@ -13,7 +13,12 @@ export default function List({ list, boardId }) {
   return (
     <div className="bg-neutral-100 w-[20vw] pb-2 rounded-lg">
       <div className="flex justify-between items-center py-2 px-1">
-        <h2 className="underline font-semibold pl-2">{list.name}</h2>
+        <h2
+          className="underline font-semibold pl-2 cursor-grab"
+          onPointerDown={(e) => dragControls.start(e)} 
+        >
+          {list.name}
+        </h2>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
