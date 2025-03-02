@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectMongo } from "@/lib/mongoose";
 import Board from "@/models/Board";
-
 import User from "@/models/User";
 
 export async function POST(req) {
@@ -164,6 +163,65 @@ export async function DELETE(req) {
     return NextResponse.json({ message: "Card deleted successfully", board });
   } catch (error) {
     console.error("Error deleting card:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    const { boardId, cardId, sourceListId, destinationListId, newIndex } =
+      await request.json();
+
+    const guestId = request.headers.get("Guest-ID");
+
+    await connectMongo();
+
+    const query = guestId
+      ? { _id: boardId, guestId: guestId }
+      : { _id: boardId };
+
+    const board = await Board.findOne(query);
+
+    if (!board) {
+      return NextResponse.json({ error: "Board not found" }, { status: 404 });
+    }
+
+    const sourceListIndex = board.lists.findIndex(
+      (list) => list._id.toString() === sourceListId
+    );
+    if (sourceListIndex === -1) {
+      return NextResponse.json(
+        { error: "Source list not found" },
+        { status: 404 }
+      );
+    }
+
+    const destinationListIndex = board.lists.findIndex(
+      (list) => list._id.toString() === destinationListId
+    );
+    if (destinationListIndex === -1) {
+      return NextResponse.json(
+        { error: "Destination list not found" },
+        { status: 404 }
+      );
+    }
+
+    const cardIndex = board.lists[sourceListIndex].cards.findIndex(
+      (card) => card._id.toString() === cardId
+    );
+    if (cardIndex === -1) {
+      return NextResponse.json({ error: "Card not found" }, { status: 404 });
+    }
+
+    const [card] = board.lists[sourceListIndex].cards.splice(cardIndex, 1);
+
+    board.lists[destinationListIndex].cards.splice(newIndex, 0, card);
+
+    await board.save();
+
+    return NextResponse.json({ success: true, board });
+  } catch (error) {
+    console.error("Error reordering card:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

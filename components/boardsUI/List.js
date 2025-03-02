@@ -1,8 +1,11 @@
+// components/boardsUI/List.js
 import AddCardButton from "./AddCardButton";
-import Cards from "./Cards";
+import DragCard from "./DragCard";
 import { useDeleteList } from "@/hooks/useDeleteList";
+import { AnimatePresence } from "framer-motion";
+import { FaGripLines, FaTrash } from "react-icons/fa";
 
-export default function List({ list, boardId }) {
+export default function List({ list, boardId, dragControls }) {
   const listId = list._id;
   const deleteList = useDeleteList(boardId);
 
@@ -11,40 +14,58 @@ export default function List({ list, boardId }) {
   };
 
   return (
-    <div className="bg-neutral-100 w-[20vw] pb-2 rounded-lg">
-      <div className="flex justify-between items-center py-2 px-1">
-        <h2 className="underline font-semibold pl-2">{list.name}</h2>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6 hover:text-red-500 cursor-pointer"
-          onClick={handleDeleteList}
+    <div className="bg-white w-[280px] rounded-lg shadow border border-slate-200 flex flex-col flex-shrink-0 max-h-[calc(100vh-180px)]">
+      {/* List Header with Gradient Strip */}
+      <div className="h-1 bg-gradient-to-r from-blue-500 to-blue-700 rounded-t-lg"></div>
+
+      {/* List Title */}
+      <div className="flex justify-between items-center py-3 px-3 border-b border-slate-100">
+        <div
+          className="flex items-center cursor-grab group"
+          onPointerDown={(e) => dragControls.start(e)}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+          <FaGripLines
+            className="mr-2 text-slate-400 group-hover:text-blue-500"
+            size={12}
           />
-        </svg>
+          <h2 className="font-medium text-slate-800 group-hover:text-blue-700 transition-colors">
+            {list.name}
+          </h2>
+        </div>
+
+        <button
+          onClick={handleDeleteList}
+          disabled={deleteList.isPending}
+          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+          aria-label="Delete list"
+        >
+          <FaTrash size={12} />
+        </button>
       </div>
 
-      {list.cards.length > 0 && (
-        <ul className="flex flex-col gap-1">
+      {/* Cards Container with Scrolling */}
+      <ul
+        data-list-id={list._id}
+        className="flex flex-col gap-2 p-2 overflow-y-auto flex-grow"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "#CBD5E1 transparent",
+        }}
+      >
+        <AnimatePresence>
           {list.cards.map((card) => (
-            <Cards
+            <DragCard
               key={card._id}
               card={card}
               boardId={boardId}
               listId={list._id}
             />
           ))}
-        </ul>
-      )}
+        </AnimatePresence>
+      </ul>
 
-      <div className="mt-2">
+      {/* Add Card Button Area */}
+      <div className="p-2 mt-auto border-t border-slate-100">
         <AddCardButton boardId={boardId} listId={listId} />
       </div>
     </div>
