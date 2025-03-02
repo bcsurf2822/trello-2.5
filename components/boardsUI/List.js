@@ -15,7 +15,7 @@ export default function List({ list, boardId, dragControls }) {
       <div className="flex justify-between items-center py-2 px-1">
         <h2
           className="underline font-semibold pl-2 cursor-grab"
-          onPointerDown={(e) => dragControls.start(e)} 
+          onPointerDown={(e) => dragControls.start(e)}
         >
           {list.name}
         </h2>

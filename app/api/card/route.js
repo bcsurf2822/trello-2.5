@@ -167,3 +167,72 @@ export async function DELETE(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req) {
+  try {
+    const body = await req.json();
+
+    if (!body.boardId || !body.cardOrder) {
+      return NextResponse.json(
+        { error: "Board ID and card order are required" },
+        { status: 400 }
+      );
+    }
+
+    await connectMongo();
+
+    const guestId = req.headers.get("Guest-ID");
+    const session = await auth();
+
+    let user;
+
+    if (session) {
+      user = await User.findById(session.user.id);
+    } else if (guestId) {
+      user = await User.findOne({ isGuest: true, _id: guestId });
+    } else {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const board = await Board.findOne({
+      _id: body.boardId,
+      userId: user.id,
+    });
+
+    if (!board) {
+      return NextResponse.json({ error: "Board not found" }, { status: 404 });
+    }
+
+    const { cardOrder } = body;
+
+    board.lists.forEach((list) => {
+      const listIdStr = list._id.toString();
+      if (cardOrder[listIdStr]) {
+        const cardMap = {};
+        list.cards.forEach((card) => {
+          cardMap[card._id.toString()] = card;
+        });
+
+        list.cards = cardOrder[listIdStr]
+          .map((cardId) => cardMap[cardId])
+          .filter((card) => card);
+      }
+    });
+
+    await board.save();
+
+    console.log("Card order updated successfully");
+
+    return NextResponse.json({
+      message: "Cards reordered successfully",
+      board,
+    });
+  } catch (error) {
+    console.error("Error saving card order:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
