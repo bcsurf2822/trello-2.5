@@ -38,7 +38,7 @@ export default function List({ list, boardId, dragControls }) {
         </svg>
       </div>
       
-      {/* Card container with list ID for drop target detection */}
+
       <ul 
         data-list-id={list._id} 
         className="flex flex-col gap-1 p-1 min-h-[50px] h-full"

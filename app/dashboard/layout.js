@@ -4,7 +4,6 @@ import NavBar from "@/components/dashboardUI/NavBar";
 import { GuestProvider } from "@/context/guestContext";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { FaLinkedin } from "react-icons/fa";
 
 export default async function DashboardLayout({ children }) {
   const session = await auth();
