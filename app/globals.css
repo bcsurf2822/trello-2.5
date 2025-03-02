@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+body.dragging-card [data-list-id] {
+  background-color: rgba(240, 240, 240, 0.7);
+  min-height: 100px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+body.dragging-card [data-list-id]:hover {
+  background-color: rgba(226, 232, 240, 0.9);
+  border-color: #94a3b8;
+}
+
+.dragging-card {
+  z-index: 10;
+  cursor: grabbing;
+  opacity: 0.8;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
