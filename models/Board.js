@@ -22,26 +22,30 @@ const listSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  cards: [cardSchema], 
+  cards: [cardSchema],
 });
 
 const boardSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
+  // Change 1: Rename this field to createdBy for consistency with your API
+  createdBy: {
+    // Change 2: Use String type to support both ObjectIds and string guest IDs
+    type: String,
     required: true,
-    ref: "User", 
   },
   name: {
     type: String,
     required: true,
     trim: true,
   },
-  lists: [listSchema],
+  lists: {
+    // Change 3: Make lists optional with a default empty array
+    type: [listSchema],
+    default: [],
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
-
 
 export default mongoose.models.Board || mongoose.model("Board", boardSchema);

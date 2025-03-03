@@ -3,15 +3,36 @@ import DeleteBoardButton from "@/components/dashboardUI/DeleteBoardButton";
 import FormNewBoard from "@/components/dashboardUI/FormNewBoard";
 import Link from "next/link";
 import { useFetchBoards } from "@/hooks/useFetchBoards";
-import { useGuest } from "@/context/guestContext";
+
 import { FaPlus } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useGuest } from "@/context/guestContext";
 
 export default function DashBoard() {
-  const { loading } = useGuest();
-  const { data, isLoading, isError } = useFetchBoards();
+  const { loading, guestId } = useGuest();
+  const { data, isLoading, isError, refetch } = useFetchBoards();
+  const [showWelcome, setShowWelcome] = useState(false);
+  
+
+  useEffect(() => {
+    if (guestId && !loading && data?.length === 0) {
+      setShowWelcome(true);
+      
+
+      const timer = setTimeout(() => {
+        setShowWelcome(false);
+      }, 10000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [guestId, loading, data]);
 
   const openModal = () => document.getElementById("my_modal_1").showModal();
-  const closeModal = () => document.getElementById("my_modal_1").close();
+  const closeModal = () => {
+    document.getElementById("my_modal_1").close();
+
+    setTimeout(() => refetch(), 500);
+  };
 
   if (loading) {
     return (
@@ -30,14 +51,24 @@ export default function DashBoard() {
           </h1>
         </div>
 
+        {showWelcome && guestId && (
+          <div className="bg-blue-50 border border-blue-100 text-blue-700 p-4 rounded-lg mb-6">
+            <p className="font-medium">👋 Welcome to your dashboard!</p>
+            <p className="text-sm mt-1">
+              You're logged in as a guest. Create your first board to get started.
+            </p>
+          </div>
+        )}
+
         <p className="text-slate-600 mb-4">
-          {data?.length
+          {data?.length > 0
             ? `You have ${data.length} board${data.length === 1 ? "" : "s"}`
             : "Create your first board to get started"}
         </p>
       </header>
 
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+
         <div
           onClick={openModal}
           className="border-2 border-dashed border-slate-200 hover:border-blue-500 bg-slate-50 hover:bg-slate-100 rounded-xl p-4 h-36 transition-all duration-200 flex flex-col items-center justify-center cursor-pointer shadow-sm hover:shadow group"
@@ -50,17 +81,20 @@ export default function DashBoard() {
           </p>
         </div>
 
+
         {isLoading && (
           <div className="col-span-full flex justify-center items-center h-36">
             <span className="loading loading-bars loading-md"></span>
           </div>
         )}
 
-        {isError && (
+
+        {isError && !guestId && (
           <div className="col-span-full bg-red-50 text-red-600 p-4 rounded-lg border border-red-100">
             <p>Error loading boards. Please try again later.</p>
           </div>
         )}
+
 
         {!loading &&
           !isLoading &&
@@ -89,7 +123,7 @@ export default function DashBoard() {
           ))}
       </div>
 
-      {/* Modal */}
+
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box bg-white p-0 rounded-lg overflow-hidden shadow-lg max-w-md">
           <FormNewBoard closeModal={closeModal} />

@@ -7,81 +7,150 @@ import { connectMongo } from "@/lib/mongoose";
 export async function GET(request) {
   try {
     await connectMongo();
-
+    
+    // Get the guest ID from headers if present
     const guestId = request.headers.get("Guest-ID");
-    const session = await auth();
-
-    let user;
-
-    if (session) {
-      user = await User.findById(session.user.id).populate("boards");
-    } else if (guestId) {
-      user = await User.findOne({ isGuest: true, _id: guestId }).populate(
-        "boards"
-      );
+    
+    // Build the query based on whether we have a guest ID
+    let query = {};
+    
+    if (guestId) {
+      // For guest users, strictly filter by their ID
+      query = { createdBy: guestId };
+      console.log(`Fetching boards for guest ID: ${guestId}`);
     } else {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      // For authenticated users (non-guests)
+      const session = await auth();
+      if (session?.user?.id) {
+        query = { createdBy: session.user.id };
+        console.log(`Fetching boards for authenticated user ID: ${session.user.id}`);
+      } else {
+        console.log("No authenticated user or guest ID found");
+        return NextResponse.json([], { status: 200 });
+      }
     }
-
-    if (!user) {
-      console.log("User not found");
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const boards = user.boards || [];
-
-    return NextResponse.json(boards);
+    
+    console.log("Query for boards:", query);
+    
+    // Find boards with error handling
+    const boards = await Board.find(query).catch(err => {
+      console.error("Error finding boards:", err);
+      
+      // If there's an error with the query and it's a guest,
+      // return empty array instead of throwing
+      if (guestId) {
+        return [];
+      }
+      
+      throw err;
+    });
+    
+    console.log(`Found ${boards?.length || 0} boards`);
+    
+    // Always return a 200 status with either the boards or an empty array
+    return NextResponse.json(boards || []);
+    
   } catch (error) {
-    console.error("Error in GET Boards Route:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error in boards API:", error);
+    
+    // If it's a guest request, return empty array even on error
+    if (request.headers.get("Guest-ID")) {
+      return NextResponse.json([], { status: 200 });
+    }
+    
+    // Otherwise return the error
+    return NextResponse.json(
+      { error: "Failed to fetch boards" },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(req) {
+export async function POST(request) {
   try {
-    const body = await req.json();
-
-    if (!body.name) {
+    await connectMongo();
+    
+    // Parse the request body
+    const body = await request.json();
+    const { name, description } = body;
+    
+    // Get the guest ID from headers if present
+    const guestId = request.headers.get("Guest-ID");
+    
+    // Make sure we have a name for the board
+    if (!name) {
       return NextResponse.json(
-        { error: "Board Name is Required" },
+        { error: "Board name is required" },
         { status: 400 }
       );
     }
-
-    await connectMongo();
-
-    const guestId = req.headers.get("Guest-ID");
-    const session = await auth();
-
-    let user;
-
-    if (session) {
-      user = await User.findById(session.user.id);
-    } else if (guestId) {
-      user = await User.findOne({ isGuest: true, _id: guestId });
+    
+    let createdById;
+    
+    if (guestId) {
+      createdById = guestId;
+      console.log(`Creating board for guest ID: ${guestId}`);
     } else {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      // Get authenticated user
+      const session = await auth();
+      if (session?.user?.id) {
+        createdById = session.user.id;
+        console.log(`Creating board for authenticated user ID: ${session.user.id}`);
+      } else {
+        console.log("No authenticated user or guest ID found");
+        return NextResponse.json(
+          { error: "Authentication required" },
+          { status: 401 }
+        );
+      }
     }
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    
+    // Create a new board with only the fields your schema expects
+    const newBoard = {
+      name,
+      description: description || "",
+      createdBy: createdById,
+      lists: []
+      // Let MongoDB handle the timestamps if they're in your schema
+    };
+    
+    console.log("Creating board with data:", newBoard);
+    
+    // Save the board to the database
+    const board = await Board.create(newBoard);
+    
+    console.log("Board created successfully:", board);
+    
+    // If this is an authenticated (non-guest) user, update their boards array
+    if (!guestId) {
+      const session = await auth();
+      if (session?.user?.id) {
+        await User.findByIdAndUpdate(
+          session.user.id,
+          { $push: { boards: board._id } }
+        );
+      }
     }
-
-    const board = await Board.create({
-      userId: user.id,
-      name: body.name,
-    });
-
-    user.boards.push(board._id);
-    await user.save();
-
-    console.log("Board Created:", board);
-    console.log("User Updated with Board:", user);
-
+    
     return NextResponse.json(board, { status: 201 });
   } catch (error) {
-    console.error("Error in POST Boards Route:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error creating board:", error);
+    
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      console.error("Validation errors:", validationErrors);
+      
+      return NextResponse.json(
+        { error: "Board validation failed", details: validationErrors },
+        { status: 400 }
+      );
+    }
+    
+    return NextResponse.json(
+      { error: "Failed to create board" },
+      { status: 500 }
+    );
   }
 }
 
@@ -98,47 +167,58 @@ export async function DELETE(req) {
 
     await connectMongo();
 
+    // Get the guest ID from headers if present
     const guestId = req.headers.get("Guest-ID");
-    const session = await auth();
-
-    let user;
-
-    if (session) {
-      user = await User.findById(session.user.id);
-    } else if (guestId) {
-      user = await User.findOne({ isGuest: true, _id: guestId });
+    
+    let query = { _id: boardId };
+    
+    if (guestId) {
+      // For guest users
+      query.createdBy = guestId;
+      console.log(`Deleting board for guest ID: ${guestId}`);
     } else {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      // For authenticated users
+      const session = await auth();
+      if (session?.user?.id) {
+        query.createdBy = session.user.id;
+        console.log(`Deleting board for authenticated user ID: ${session.user.id}`);
+      } else {
+        console.log("No authenticated user or guest ID found");
+        return NextResponse.json(
+          { error: "Authentication required" },
+          { status: 401 }
+        );
+      }
+    }
+    
+    console.log("Delete query:", query);
+
+    // Delete the board with the correct query
+    const result = await Board.deleteOne(query);
+    
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { error: "Board not found or you don't have permission to delete it" },
+        { status: 404 }
+      );
     }
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    // If this is a non-guest user, update their boards array
+    if (!guestId) {
+      const session = await auth();
+      if (session?.user?.id) {
+        await User.findByIdAndUpdate(
+          session.user.id,
+          { $pull: { boards: boardId } }
+        );
+      }
     }
 
-    const board = await Board.findOne({
-      _id: boardId,
-      userId: user.id,
-    });
-
-    if (!board) {
-      return NextResponse.json({ error: "Board not found" }, { status: 404 });
-    }
-
-    // Delete the board
-    await Board.deleteOne({ _id: boardId, userId: user.id });
-
-    // Remove the board from the user's boards array if the user is not a guest
-    if (!user.isGuest) {
-      user.boards = user.boards.filter((id) => id.toString() !== boardId);
-      await user.save();
-    }
-
-    console.log("Board Deleted:", board);
-    console.log("User Updated After Deletion:", user);
+    console.log("Board deleted successfully");
 
     return NextResponse.json({ message: "Board deleted successfully" });
   } catch (error) {
-    console.error("Error in DELETE Boards Route:", error.message);
+    console.error("Error in DELETE Boards Route:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
