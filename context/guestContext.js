@@ -6,20 +6,21 @@ const GuestContext = createContext();
 export const GuestProvider = ({ children }) => {
   const [guestId, setGuestId] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
 
+  useEffect(() => {
     const getCookie = (name) => {
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith(`${name}=`))
-        ?.split('=')[1];
-      
+      const cookies = document.cookie.split("; ");
+
+      const cookieValue = cookies
+        .find((row) => row.startsWith(`${name}=`))
+        ?.split("=")[1];
+
       return cookieValue ? decodeURIComponent(cookieValue) : null;
     };
-    
+
     try {
       const guestIdFromCookie = getCookie("guestId");
+
       setGuestId(guestIdFromCookie || null);
     } catch (error) {
       console.error("Error parsing guest cookie:", error);
@@ -28,16 +29,17 @@ export const GuestProvider = ({ children }) => {
       setLoading(false);
     }
   }, []);
-  
 
   const isGuest = !!guestId;
-  
+
+  const contextValue = {
+    guestId,
+    loading,
+    isGuest,
+  };
+
   return (
-    <GuestContext.Provider value={{ 
-      guestId, 
-      loading, 
-      isGuest  
-    }}>
+    <GuestContext.Provider value={contextValue}>
       {children}
     </GuestContext.Provider>
   );
@@ -48,5 +50,6 @@ export const useGuest = () => {
   if (!context) {
     throw new Error("useGuest must be used within a GuestProvider");
   }
+
   return context;
 };

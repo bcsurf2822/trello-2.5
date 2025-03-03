@@ -26,9 +26,7 @@ const listSchema = new mongoose.Schema({
 });
 
 const boardSchema = new mongoose.Schema({
-  // Change 1: Rename this field to createdBy for consistency with your API
   createdBy: {
-    // Change 2: Use String type to support both ObjectIds and string guest IDs
     type: String,
     required: true,
   },
@@ -38,7 +36,6 @@ const boardSchema = new mongoose.Schema({
     trim: true,
   },
   lists: {
-    // Change 3: Make lists optional with a default empty array
     type: [listSchema],
     default: [],
   },
