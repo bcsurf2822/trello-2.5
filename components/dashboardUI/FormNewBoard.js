@@ -15,51 +15,47 @@ const FormNewBoard = ({ closeModal }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (createBoard.isPending) return;
-    
+
     const boardData = { name };
-    
-    // Create a temporary board to show immediately
+
     const tempBoardId = `temp-${Date.now()}`;
     const tempBoard = {
       _id: tempBoardId,
       name: name,
       lists: [],
       createdAt: new Date().toISOString(),
-      _temporary: true
+      _temporary: true,
     };
-    
-    // Get the current boards
-    const currentBoards = queryClient.getQueryData(["boards", guestId || "authenticated"]) || [];
-    
-    // Add the temporary board to the UI
+
+    const currentBoards =
+      queryClient.getQueryData(["boards", guestId || "authenticated"]) || [];
+
     queryClient.setQueryData(
       ["boards", guestId || "authenticated"],
       [...currentBoards, tempBoard]
     );
-    
-    // Close the modal and pass the temporary ID for animation
+
     closeModal(tempBoardId);
-    
-    // Now perform the actual API call
+
     createBoard.mutate(boardData, {
       onSuccess: (newBoard) => {
-        // Replace the temp board with the real one
         queryClient.setQueryData(
           ["boards", guestId || "authenticated"],
-          prevBoards => prevBoards.map(board => 
-            board._id === tempBoardId ? newBoard : board
-          )
+          (prevBoards) =>
+            prevBoards.map((board) =>
+              board._id === tempBoardId ? newBoard : board
+            )
         );
         setName("");
       },
       onError: (error) => {
         console.error("Error creating board:", error);
         toast.error("Failed to create board. Please try again.");
-        
-        // Remove the temporary board on error
+
         queryClient.setQueryData(
           ["boards", guestId || "authenticated"],
-          prevBoards => prevBoards.filter(board => board._id !== tempBoardId)
+          (prevBoards) =>
+            prevBoards.filter((board) => board._id !== tempBoardId)
         );
       },
     });
@@ -75,7 +71,6 @@ const FormNewBoard = ({ closeModal }) => {
       onSubmit={handleSubmit}
       className="bg-white p-8 rounded-xl shadow-md border border-slate-200 space-y-6"
     >
-      {/* TITLE */}
       <div className="flex justify-between items-center border-b border-slate-100 pb-3">
         <p className="font-bold text-lg text-blue-700">Create Board</p>
         <button
@@ -86,7 +81,7 @@ const FormNewBoard = ({ closeModal }) => {
           <IoClose size={18} />
         </button>
       </div>
-      {/* FORM */}
+
       <label className="form-control block">
         <div className="label flex flex-col items-start">
           <span className="text-md font-medium text-slate-700">Title</span>
@@ -100,7 +95,7 @@ const FormNewBoard = ({ closeModal }) => {
           required
         />
       </label>
-      {/* BUTTON */}
+
       <button
         type="submit"
         className={`w-full py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-colors shadow-sm ${

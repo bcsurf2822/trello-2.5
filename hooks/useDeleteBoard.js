@@ -1,17 +1,17 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useGuest } from "@/context/guestContext";
 
 export const useDeleteBoard = () => {
-  const queryClient = useQueryClient();
   const { guestId } = useGuest();
-  
+
   return useMutation({
     mutationFn: async ({ boardId }) => {
       const headers = guestId ? { "Guest-ID": guestId } : {};
       try {
-        const response = await axios.delete(`/api/boards/${boardId}`, {
+        const response = await axios.delete("/api/boards", {
           headers,
+          data: { boardId },
         });
         return response.data;
       } catch (error) {
@@ -22,10 +22,7 @@ export const useDeleteBoard = () => {
         throw error;
       }
     },
-    
-    // We've removed the onSuccess invalidation since we're handling 
-    // cache updates manually in the DeleteBoardButton component
-    
+
     onError: (error) => {
       console.error(
         "Error deleting board in onError:",

@@ -6,12 +6,10 @@ import { useFetchBoards } from "@/hooks/useFetchBoards";
 import { useGuest } from "@/context/guestContext";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 
 export default function DashBoard() {
   const { loading, guestId } = useGuest();
-  const queryClient = useQueryClient();
-  
+
   const {
     data,
     isLoading,
@@ -27,38 +25,32 @@ export default function DashBoard() {
   const [newBoardIds, setNewBoardIds] = useState(new Set());
   const prevDataLength = useRef(0);
 
-  // Track data changes to detect new boards
   useEffect(() => {
     if (data && !isLoading && !isRefetching) {
-      // We'll let the optimistic updates add the animation 
-      // This is still useful for cases where boards are added from elsewhere
       if (data.length > prevDataLength.current) {
-        // Find newly added boards that weren't added via optimistic updates
         const newIds = new Set();
-        data.forEach(board => {
-          // Check if it's a new board and not already marked as new
-          const isNewBoard = !prevDataLength.current || 
-                            (!newBoardIds.has(board._id) && !board._temporary);
+        data.forEach((board) => {
+          const isNewBoard =
+            !prevDataLength.current ||
+            (!newBoardIds.has(board._id) && !board._temporary);
           if (isNewBoard) {
             newIds.add(board._id);
           }
         });
-        
-        // Update the set of new board IDs
+
         if (newIds.size > 0) {
           setNewBoardIds(new Set([...newBoardIds, ...newIds]));
-          
-          // Remove IDs from the "new" list after animation (3 seconds)
+
           setTimeout(() => {
-            setNewBoardIds(prev => {
+            setNewBoardIds((prev) => {
               const updated = new Set(prev);
-              newIds.forEach(id => updated.delete(id));
+              newIds.forEach((id) => updated.delete(id));
               return updated;
             });
           }, 3000);
         }
       }
-      
+
       prevDataLength.current = data?.length || 0;
       setLastRefreshed(Date.now());
     }
@@ -80,7 +72,7 @@ export default function DashBoard() {
   // Handle logout
   useEffect(() => {
     const isLoggedOut = !guestId && !loading;
-    
+
     if (isLoggedOut) {
       console.log("User logged out, preventing board refetch");
     }
@@ -90,7 +82,7 @@ export default function DashBoard() {
   const handleBoardDeleted = (boardId) => {
     // If the board is in our "new" list, remove it
     if (newBoardIds.has(boardId)) {
-      setNewBoardIds(prev => {
+      setNewBoardIds((prev) => {
         const updated = new Set(prev);
         updated.delete(boardId);
         return updated;
@@ -105,22 +97,19 @@ export default function DashBoard() {
     document.getElementById("my_modal_1").close();
 
     if (newBoardId) {
-      setNewBoardIds(prev => new Set([...prev, newBoardId]));
-      
+      setNewBoardIds((prev) => new Set([...prev, newBoardId]));
+
       // After 3 seconds, remove the highlight
       setTimeout(() => {
-        setNewBoardIds(prev => {
+        setNewBoardIds((prev) => {
           const updated = new Set(prev);
           updated.delete(newBoardId);
           return updated;
         });
       }, 3000);
     }
-    
-    // No refetch needed since we're using optimistic updates
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -190,11 +179,17 @@ export default function DashBoard() {
         {!isLoading &&
           !isError &&
           data?.map((board) => (
-            <div 
-              key={board._id} 
-              className={`group ${isNewBoard(board._id) ? 'animate-fadeIn' : ''}`}
+            <div
+              key={board._id}
+              className={`group ${
+                isNewBoard(board._id) ? "animate-fadeIn" : ""
+              }`}
             >
-              <div className={`bg-white hover:bg-slate-50 border border-slate-200 rounded-xl h-36 transition-all duration-200 shadow-sm hover:shadow flex flex-col overflow-hidden ${isNewBoard(board._id) ? 'border-blue-500 shadow-md' : ''}`}>
+              <div
+                className={`bg-white hover:bg-slate-50 border border-slate-200 rounded-xl h-36 transition-all duration-200 shadow-sm hover:shadow flex flex-col overflow-hidden ${
+                  isNewBoard(board._id) ? "border-blue-500 shadow-md" : ""
+                }`}
+              >
                 <div className="h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
                 <div className="p-4 flex flex-col justify-between h-full">
                   <Link
@@ -208,8 +203,8 @@ export default function DashBoard() {
                     <div className="text-xs text-slate-500">
                       {board.lists?.length || 0} lists
                     </div>
-                    <DeleteBoardButton 
-                      boardId={board._id} 
+                    <DeleteBoardButton
+                      boardId={board._id}
                       onDelete={() => handleBoardDeleted(board._id)}
                     />
                   </div>
@@ -230,10 +225,16 @@ export default function DashBoard() {
 
       <style jsx global>{`
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 1s ease-out;
         }

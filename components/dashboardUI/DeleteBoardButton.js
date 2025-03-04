@@ -4,43 +4,53 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGuest } from "@/context/guestContext";
 import { useState } from "react";
 
-export default function DeleteBoardButton({ boardId }) {
+export default function DeleteBoardButton({ boardId, onDelete }) {
   const deleteBoard = useDeleteBoard();
   const queryClient = useQueryClient();
   const { guestId } = useGuest();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDeleteBoard = () => {
+  const handleDeleteBoard = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (isDeleting) return;
-    
-    // Set local state to show loading
+
     setIsDeleting(true);
-    
-    // Get current boards
-    const currentBoards = queryClient.getQueryData(["boards", guestId || "authenticated"]) || [];
-    
-    // Save a backup copy of the boards for error recovery
+
+    const currentBoards =
+      queryClient.getQueryData(["boards", guestId || "authenticated"]) || [];
+
     const backupBoards = [...currentBoards];
-    
-    // Optimistically remove the board from UI
+
     queryClient.setQueryData(
       ["boards", guestId || "authenticated"],
-      currentBoards.filter(board => board._id !== boardId)
+      currentBoards.filter((board) => board._id !== boardId)
     );
-    
-    // Now perform the actual API call
-    deleteBoard.mutate({ boardId }, {
-      onSuccess: () => {
-        // Already removed from UI, so nothing else needed
-        setIsDeleting(false);
-      },
-      onError: (error) => {
-        console.error("Error deleting board:", error);
-        // Revert the optimistic update on error
-        queryClient.setQueryData(["boards", guestId || "authenticated"], backupBoards);
-        setIsDeleting(false);
+
+    if (onDelete) {
+      onDelete(boardId);
+    }
+
+    deleteBoard.mutate(
+      { boardId },
+      {
+        onSuccess: () => {
+          setIsDeleting(false);
+        },
+        onError: (error) => {
+          console.error("Error deleting board:", error);
+          queryClient.setQueryData(
+            ["boards", guestId || "authenticated"],
+            backupBoards
+          );
+          setIsDeleting(false);
+          alert("Failed to delete board. Please try again.");
+        },
       }
-    });
+    );
   };
 
   return (
