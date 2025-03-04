@@ -1,15 +1,13 @@
-import { useGuest } from "@/context/guestContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useGuest } from "@/context/guestContext";
 
 export const useDeleteBoard = () => {
-  const queryClient = useQueryClient();
   const { guestId } = useGuest();
 
   return useMutation({
     mutationFn: async ({ boardId }) => {
       const headers = guestId ? { "Guest-ID": guestId } : {};
-
       try {
         const response = await axios.delete("/api/boards", {
           headers,
@@ -18,19 +16,17 @@ export const useDeleteBoard = () => {
         return response.data;
       } catch (error) {
         console.error(
-          "Error in mutationFn:",
+          "Error in delete mutationFn:",
           error.response?.data || error.message || error
         );
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards", guestId || "authenticated"]);
-    },
+
     onError: (error) => {
       console.error(
         "Error deleting board in onError:",
-        error.response?.data || error.message || error
+        error.response?.data?.error || error.message || error
       );
     },
   });

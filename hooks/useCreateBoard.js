@@ -1,9 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useGuest } from "@/context/guestContext";
 
 export const useCreateBoard = () => {
-  const queryClient = useQueryClient();
   const { guestId } = useGuest();
 
   return useMutation({
@@ -13,7 +12,6 @@ export const useCreateBoard = () => {
         const response = await axios.post("/api/boards", boardData, {
           headers,
         });
-
         return response.data;
       } catch (error) {
         console.error(
@@ -23,9 +21,7 @@ export const useCreateBoard = () => {
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards", guestId || "authenticated"]);
-    },
+
     onError: (error) => {
       console.error(
         "Error creating board in onError:",

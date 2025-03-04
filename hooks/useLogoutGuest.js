@@ -17,6 +17,10 @@ export const useLogoutGuest = () => {
       }
     },
     onSuccess: () => {
+      queryClient.setQueryData(["boards", "authenticated"], []);
+
+      queryClient.removeQueries({ queryKey: ["boards"] });
+
       queryClient.invalidateQueries(["guestUser"]);
     },
     onError: (error) => {

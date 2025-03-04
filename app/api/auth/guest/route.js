@@ -4,91 +4,53 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    let connectionAttempts = 0;
-    const maxAttempts = 0.3;
-    let connected = false;
+    await connectMongo();
 
-    while (!connected && connectionAttempts < maxAttempts) {
-      try {
-        await connectMongo();
-        connected = true;
-      } catch (connError) {
-        connectionAttempts++;
-        console.error(
-          `MongoDB connection attempt ${connectionAttempts} failed:`,
-          connError
-        );
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
-    }
-
-    if (!connected) {
-      console.error("Failed to connect to MongoDB after multiple attempts");
-      return NextResponse.json(
-        { error: "Database connection failed, please try again" },
-        { status: 503 }
-      );
-    }
-
-    const timestamp = Date.now();
-    const randomPart = Math.floor(Math.random() * 10000)
-      .toString()
-      .padStart(4, "0");
-    const uniqueId = `${timestamp}-${randomPart}`;
-
+    const uniqueId = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     const guestName = `guest${uniqueId.slice(-4)}`;
     const guestEmail = `${guestName}@trello2.5.com`;
 
-    if (!guestName || !guestEmail) {
-      return NextResponse.json(
-        { error: "Failed to generate guest credentials" },
-        { status: 400 }
-      );
-    }
+    console.log(`Creating guest user: ${guestName} with email: ${guestEmail}`);
 
     const guestUser = await User.create({
       name: guestName,
       isGuest: true,
       email: guestEmail,
-    }).catch((createError) => {
-      if (createError.code === 11000) {
-        console.error("Duplicate guest user detected:", createError);
-        throw new Error("Guest user with this identity already exists");
-      }
-      throw createError;
     });
+
+    console.log(`Guest user created with ID: ${guestUser._id}`);
 
     const response = NextResponse.json({
       message: "Guest user created successfully",
       guest: {
-        id: guestUser._id,
+        id: guestUser._id.toString(),
         name: guestUser.name,
         isGuest: true,
       },
     });
 
-    response.cookies.set("guestId", guestUser._id.toString(), {
-      httpOnly: true,
+    const guestIdValue = guestUser._id.toString();
+    console.log(`Setting cookie guestId=${guestIdValue}`);
+
+    response.cookies.set({
+      name: "guestId",
+      value: guestIdValue,
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 60 * 60 * 24,
       path: "/",
+      maxAge: 60 * 60 * 24,
     });
+
+    response.headers.set("Guest-ID", guestIdValue);
 
     return response;
   } catch (error) {
-    console.error("Error creating guest user:", {
-      message: error.message,
-      stack: error.stack,
-      code: error.code,
-    });
+    console.error("Error creating guest user:", error.message);
+    console.error("Stack:", error.stack);
 
     return NextResponse.json(
-      {
-        error: "Unable to create guest user",
-        details:
-          process.env.NODE_ENV === "development" ? error.message : undefined,
-      },
+      { error: "Unable to create guest user", details: error.message },
       { status: 500 }
     );
   }

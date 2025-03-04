@@ -3,23 +3,60 @@ import { useCreateBoard } from "@/hooks/useCreateBoard";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { IoClose } from "react-icons/io5";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGuest } from "@/context/guestContext";
 
 const FormNewBoard = ({ closeModal }) => {
   const [name, setName] = useState("");
   const createBoard = useCreateBoard();
+  const queryClient = useQueryClient();
+  const { guestId } = useGuest();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (createBoard.isPending) return;
+
     const boardData = { name };
+
+    const tempBoardId = `temp-${Date.now()}`;
+    const tempBoard = {
+      _id: tempBoardId,
+      name: name,
+      lists: [],
+      createdAt: new Date().toISOString(),
+      _temporary: true,
+    };
+
+    const currentBoards =
+      queryClient.getQueryData(["boards", guestId || "authenticated"]) || [];
+
+    queryClient.setQueryData(
+      ["boards", guestId || "authenticated"],
+      [...currentBoards, tempBoard]
+    );
+
+    closeModal(tempBoardId);
+
     createBoard.mutate(boardData, {
-      onSuccess: () => {
+      onSuccess: (newBoard) => {
+        queryClient.setQueryData(
+          ["boards", guestId || "authenticated"],
+          (prevBoards) =>
+            prevBoards.map((board) =>
+              board._id === tempBoardId ? newBoard : board
+            )
+        );
         setName("");
-        closeModal();
       },
       onError: (error) => {
         console.error("Error creating board:", error);
         toast.error("Failed to create board. Please try again.");
+
+        queryClient.setQueryData(
+          ["boards", guestId || "authenticated"],
+          (prevBoards) =>
+            prevBoards.filter((board) => board._id !== tempBoardId)
+        );
       },
     });
   };
@@ -34,7 +71,6 @@ const FormNewBoard = ({ closeModal }) => {
       onSubmit={handleSubmit}
       className="bg-white p-8 rounded-xl shadow-md border border-slate-200 space-y-6"
     >
-      {/* TITLE */}
       <div className="flex justify-between items-center border-b border-slate-100 pb-3">
         <p className="font-bold text-lg text-blue-700">Create Board</p>
         <button
@@ -46,7 +82,6 @@ const FormNewBoard = ({ closeModal }) => {
         </button>
       </div>
 
-      {/* FORM */}
       <label className="form-control block">
         <div className="label flex flex-col items-start">
           <span className="text-md font-medium text-slate-700">Title</span>
@@ -61,7 +96,6 @@ const FormNewBoard = ({ closeModal }) => {
         />
       </label>
 
-      {/* BUTTON */}
       <button
         type="submit"
         className={`w-full py-2 rounded-lg font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transition-colors shadow-sm ${
