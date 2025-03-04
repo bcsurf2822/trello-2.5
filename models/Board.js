@@ -22,27 +22,26 @@ const listSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  cards: [cardSchema],
+  cards: [cardSchema], 
 });
 
 const boardSchema = new mongoose.Schema({
-  createdBy: {
-    type: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: "User", 
   },
   name: {
     type: String,
     required: true,
     trim: true,
   },
-  lists: {
-    type: [listSchema],
-    default: [],
-  },
+  lists: [listSchema],
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
 
 export default mongoose.models.Board || mongoose.model("Board", boardSchema);
