@@ -1,6 +1,6 @@
 # Trello 2.5
-
 Trello 2.5 is a clone of the kanban-style site Trello® used for project and task management. Create boards, lists, and cards to organize daily tasks or projects.
+
 
 ## 🏆 Goals
 
