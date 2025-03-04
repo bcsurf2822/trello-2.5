@@ -40,12 +40,25 @@ export default function DashBoard() {
     }
   }, [guestId, loading, data]);
 
+  useEffect(() => {
+
+    const isLoggedOut = !guestId && !loading;
+    
+    if (isLoggedOut) {
+    
+      console.log("User logged out, preventing board refetch");
+    }
+  }, [guestId, loading]);
+
   const openModal = () => document.getElementById("my_modal_1").showModal();
 
   const closeModal = () => {
     document.getElementById("my_modal_1").close();
     setTimeout(() => {
-      refetch();
+      // Only refetch if we have a guestId to prevent 404s
+      if (guestId || (window.location.pathname !== "/" && window.location.pathname !== "/login")) {
+        refetch();
+      }
     }, 500);
   };
 
