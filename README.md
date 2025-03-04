@@ -1,17 +1,23 @@
 # Trello 2.5
+Trello 2.5 is a clone of the kanban-style site Trello® used for project and task management. Create boards, lists, and cards to organize daily tasks or projects.
 
-Trello 2.5 is a clone of the popular Trello platform, rebuilt from the ground up as an update to my original Trello 2 project, which was developed during my time at Parsity. This updated version was built using Next.js' full-stack capabilities, integrates Google OAuth via NextAuth, includes a guest login option, leverages TanStack Query for efficient server state management, features a cleaner, more modern UI/UX, and uses MongoDB Atlas to securely store and manage data.
 
-The original Trello 2 project was built using legacy Redux, Create React App, and had a JWT-based authentication strategy. Feel Free to view that project [here](https://github.com/bcsurf2822/ParsityTrello).
+## 🏆 Goals
 
-## Features
+My goal in this project was to get aquainted with the full-stack capabilities of Next.js and to learn how to use Tanstack Query. I wanted to retain the features of Trello 2 while improving the UI/UX, drag-and-drop functionality, and adding new features such as labels and descriptions in the cards.
 
-- Log in securely with Google OAuth authentication via NextAuth.
-- Access the application instantly with a Guest Login option.
-- Drag and drop Lists seamlessly using Framer Motion Reorder for dynamic reordering.
-- Create boards, lists, and cards to organize tasks effectively.
+## 🎥 Live Demo
 
-## Dev Dependencies
+[Trello 2.5](https://trello-2-5.vercel.app/)
+
+## 🔑 Features
+
+- **Secure Authentication:** Google OAuth authentication via NextAuth and guest authentication for users to test the application.
+- **Drag and Drop Functionality:** Lists and cards can be dragged seamlessly powered by Framer Motion Reorder.
+- **Sleek, Responsive, Modern Design:** Styled with Tailwind CSS, Daisy UI, and animations from Framer Motion.
+- **React Query:** Handles server state management and provides visual feedback when creating or deleting boards, lists, and cards through optimistic UI updates.
+
+## 🔌 Dev Dependencies
 
 - [Tanstack/React-Query](https://tanstack.com/query/v5/docs/framework/react/overview)
 - [Framer-Motion](https://motion.dev/)
@@ -27,11 +33,7 @@ The original Trello 2 project was built using legacy Redux, Create React App, an
 - [React](https://react.dev/)
 - eslint
 
-## Live Demo
-
-[Trello 2.5](https://trello-2-5.vercel.app/)
-
-## Run Locally
+## 💾 Run Locally
 
 Clone the project
 
@@ -57,11 +59,15 @@ Start the server
   npm run dev
 ```
 
-## Screenshots
+## 📷 Screenshots
 
-![Login](/public/screenshots/login.png)
-![Dashboard](/public/screenshots/boards.png)
-![Board ID](/public/screenshots/lists.png)
+![Login](/public/screenshots/login-screen.png)
+![Dashboard](/public/screenshots/dashboard.png)
+![Board ID](/public/screenshots/list-details.png)
+
+## Inspiration
+
+My idea for this project came from Trello 2, a team based project built during my time at Parsity. Trello 2 was developed using Redux, React with Create React App, Node, Express, and had a JWT-based authentication strategy. Feel Free to view that project repo [here](https://github.com/bcsurf2822/ParsityTrello).
 
 ## 🔗 Links
 
