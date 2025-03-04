@@ -124,10 +124,8 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Board not found" }, { status: 404 });
     }
 
-    // Delete the board
     await Board.deleteOne({ _id: boardId, userId: user.id });
 
-    // Remove the board from the user's boards array if the user is not a guest
     if (!user.isGuest) {
       user.boards = user.boards.filter((id) => id.toString() !== boardId);
       await user.save();
