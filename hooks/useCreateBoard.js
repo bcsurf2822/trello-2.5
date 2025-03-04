@@ -5,7 +5,7 @@ import { useGuest } from "@/context/guestContext";
 export const useCreateBoard = () => {
   const queryClient = useQueryClient();
   const { guestId } = useGuest();
-
+  
   return useMutation({
     mutationFn: async (boardData) => {
       const headers = guestId ? { "Guest-ID": guestId } : {};
@@ -13,7 +13,6 @@ export const useCreateBoard = () => {
         const response = await axios.post("/api/boards", boardData, {
           headers,
         });
-
         return response.data;
       } catch (error) {
         console.error(
@@ -23,9 +22,10 @@ export const useCreateBoard = () => {
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards", guestId || "authenticated"]);
-    },
+    
+    // We've removed the onSuccess invalidation since we're handling 
+    // cache updates manually in the FormNewBoard component
+    
     onError: (error) => {
       console.error(
         "Error creating board in onError:",
